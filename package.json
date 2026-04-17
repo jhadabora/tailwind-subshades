@@ -1,0 +1,34 @@
+{
+  "name": "tailwind-subshades",
+  "version": "0.1.0",
+  "description": "A plugin for Tailwind v3 and v4 for generating intermediate color steps for vanilla and custom Tailwind color tokens.",
+  "keywords": [
+    "tailwind",
+    "tailwindcss",
+    "plugin",
+    "tailwindv3",
+    "tailwindv4",
+    "tailwind-plugin",
+    "subshades",
+    "subshade",
+    "colors",
+    "subcolors",
+    "intermediate",
+    "tokens"
+  ],
+  "homepage": "https://github.com/jhadabora/tailwind-subshades#readme",
+  "bugs": {
+    "url": "https://github.com/jhadabora/tailwind-subshades/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhadabora/tailwind-subshades.git"
+  },
+  "license": "MIT",
+  "author": "jhadabora",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
