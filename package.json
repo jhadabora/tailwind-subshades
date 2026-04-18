@@ -38,11 +38,16 @@
     "require": "./dist/index.cjs"
   },
   "scripts": {
-    "build": "tsup src/index.js --format esm,cjs --dts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsdown src/index.ts --format esm,cjs --dts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "tsup": "^8.5.1",
+    "@types/tailwindcss": "^3.0.11",
+    "tsdown": "^0.21.9",
     "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "tailwindcss": "^3.0 || ^4.0"
   }
 }
