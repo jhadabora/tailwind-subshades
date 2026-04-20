@@ -1,27 +1,28 @@
 import tailwindPlugin from "tailwindcss/plugin";
-import {generateShades} from "./common";
-import type {TailwindPluginWithoutOptions} from "tailwindcss/plugin";
+import type {TailwindPluginWithOptions} from "tailwindcss/plugin";
+import {defaultConfig as commonDefaultConfig, determineSteps, generateConfig, SubshadesConfig} from "./common";
+import {useMode, modeRgb} from "culori/fn";
 
-export const plugin: TailwindPluginWithoutOptions = tailwindPlugin(function() {}, {
-    theme: {
-        extend: {
-            colors: ({ colors }) => {
-                console.log('v3', colors)
-                const additions: { [key: string]: { [key: number]: string } } = {}
-                for (const [name, shades] of Object.entries(colors)) {
-                    if (typeof shades !== 'object') {
-                        continue
-                    }
+export interface Subshades3Config extends SubshadesConfig {}
+export const defaultConfig: Subshades3Config = commonDefaultConfig
 
-                    const descriptor = Object.getOwnPropertyDescriptor(colors, name)
-                    if (descriptor && typeof descriptor.get === "function") {
-                        continue
-                    }
+const rgb = useMode(modeRgb)
 
-                    additions[name] = generateShades(shades, colors, false)
-                }
-                return additions
-            },
-        },
+export const plugin: TailwindPluginWithOptions<Partial<Subshades3Config>> = tailwindPlugin.withOptions(
+    (options: Partial<Subshades3Config> = {}) => function (api) {
+
     },
-})
+    (options: Partial<Subshades3Config> = {}) => {
+        const config: SubshadesConfig = {...defaultConfig, ...options}
+        const colors = {...config.default, ...config.custom}
+        const steps = determineSteps(config.steps)
+        const shades = generateConfig(colors, steps, config.extraShades, rgb)
+        return {
+            theme: {
+                extend: {
+                    colors: shades
+                }
+            }
+        }
+    }
+)

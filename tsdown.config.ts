@@ -1,8 +1,7 @@
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
-  entry: ['src/index.ts'],
-  format: 'cjs',
-  clean: false,
-  target: false,
+  entry: "src/index.ts",
+  format: ["esm", "cjs"],
+  sourcemap: true,
 })
