@@ -1,7 +1,6 @@
 import defaultColors from "tailwindcss/colors"
 import {TailwindColorValue} from "tailwindcss/tailwind-config";
-import type {ConvertFn} from "culori/require";
-import {formatCss, modeRgb, useMode} from "culori/fn";
+import {modeRgb, useMode} from "culori/fn";
 
 export interface SubshadesConfig {
     default: { [name: string]: TailwindColorValue },
@@ -36,7 +35,7 @@ export function determineSteps(steps: number|number[]): number[] {
     return output
 }
 
-export function generateConfig(colors: { [p: string]: TailwindColorValue }, steps: number[], extra: { [p: number]: string }, output: ConvertFn<any>): { [p: string]: { [p: number]: string } } {
+export function generateConfig(colors: { [p: string]: TailwindColorValue }, steps: number[], extra: { [p: number]: string }, output: (rgb: { mode: 'rgb', r: number, g: number, b: number }) => string): { [p: string]: { [p: number]: string } } {
     const ret: { [name: string]: { [shade: number]: string } } = {}
     for (const [name, color] of Object.entries(colors)) {
         if (typeof color !== 'object') {
@@ -50,7 +49,7 @@ export function generateConfig(colors: { [p: string]: TailwindColorValue }, step
 
 const rgb = useMode(modeRgb)
 
-export function generateShades(original: { [shade: string|number]: string }, steps: number[], output: ConvertFn<any>): { [shade: number]: string } {
+export function generateShades(original: { [shade: string|number]: string }, steps: number[], output: (rgb: { mode: 'rgb', r: number, g: number, b: number }) => string): { [shade: number]: string } {
     const additions: { [shade: number]: string } = {}
     const shades = Object.keys(original).map(Number).filter(n => !isNaN(n))
     if (shades.length <= 0) {
@@ -72,12 +71,12 @@ export function generateShades(original: { [shade: string|number]: string }, ste
         }
 
         const factor = (step - prevShade) / (nextShade - prevShade)
-        const result = formatCss(output({
+        const result = output({
             mode: 'rgb',
             r: prevParse.r + ((nextParse.r - prevParse.r) * factor),
             g: prevParse.g + ((nextParse.g - prevParse.g) * factor),
             b: prevParse.b + ((nextParse.b - prevParse.b) * factor),
-        }))
+        })
         if (result) {
             additions[step] = result
         }
