@@ -6,9 +6,9 @@ This package provides a plugin for your Tailwind config that automatically gener
 
 ## Dependencies
 
-[Tailwind](https://tailwindcss.com/) v3 or v4
-[Node](https://nodejs.org) >=12.20.0
-[culori](https://culorijs.org/) ^4.0.1
+- [Tailwind](https://tailwindcss.com/) v3 or v4
+- [Node](https://nodejs.org) >=12.20.0
+- [culori](https://culorijs.org/) ^4.0.1
 
 > Tested to work in both Tailwind v3 and v4 for both CJS and ESM configs in a Next.js environment.
 
