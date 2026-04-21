@@ -1,28 +1,21 @@
-import tailwindPlugin from "tailwindcss/plugin";
-import type {TailwindPluginWithOptions} from "tailwindcss/plugin";
-import {defaultConfig as commonDefaultConfig, determineSteps, generateConfig, SubshadesConfig} from "./common";
-import {useMode, modeRgb, formatHex} from "culori/fn";
-
-export interface Subshades3Config extends SubshadesConfig {}
-export const defaultConfig: Subshades3Config = commonDefaultConfig
+import {createPlugin, DefaultColors, SubshadesConfig,} from "./common";
+import {useMode, modeRgb, formatHex, formatCss} from "culori/fn";
+import defaultColors from "tailwindcss/colors";
 
 const rgb = useMode(modeRgb)
 
-export const plugin: TailwindPluginWithOptions<Partial<Subshades3Config>> = tailwindPlugin.withOptions(
-    (options: Partial<Subshades3Config> = {}) => function (api) {
-
+export const defaultConfig = (colors: Partial<DefaultColors>): SubshadesConfig => ({
+    default: colors,
+    custom: {},
+    ignore: [],
+    steps: 50,
+    extraShades: {
+        0: colors['white'] ?? '#fff',
+        1000: colors['black'] ?? '#000',
     },
-    (options: Partial<Subshades3Config> = {}) => {
-        const config: SubshadesConfig = {...defaultConfig, ...options}
-        const colors = {...config.default, ...config.custom}
-        const steps = determineSteps(config.steps)
-        const shades = generateConfig(colors, steps, config.extraShades, ((color: { mode: 'rgb', r: number, g: number, b: number }): string => formatHex(rgb(color))))
-        return {
-            theme: {
-                extend: {
-                    colors: shades
-                }
-            }
-        }
-    }
-)
+    output: (color) => formatHex(rgb(color)),
+})
+
+export const plugin = createPlugin(defaultConfig)
+
+export default plugin

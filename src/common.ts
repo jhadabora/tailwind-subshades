@@ -1,28 +1,21 @@
 import defaultColors from "tailwindcss/colors"
+import tailwindPlugin from "tailwindcss/plugin";
+import type {TailwindPluginWithOptions} from "tailwindcss/plugin";
 import {TailwindColorValue} from "tailwindcss/tailwind-config";
 import {modeRgb, useMode} from "culori/fn";
 
-export interface SubshadesConfig {
-    default: { [name: string]: TailwindColorValue },
+export type DefaultColors = typeof defaultColors
+
+export interface SubshadesConfig extends Partial<Record<`--color-${string}-${number}`, string>> {
+    default: { [name: string]: TailwindColorValue } | undefined,
     custom: { [name: string]: TailwindColorValue },
+    ignore: string[],
     steps: number|number[],
-    extraShades: { [shade: string|number]: string }
+    extraShades: { [shade: string|number]: string },
+    output: (color: { mode: 'rgb', r: number, g: number, b: number }) => string,
 }
 
 const deprecatedColors = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray']
-export const defaultConfig: SubshadesConfig = {
-    default: Object.fromEntries(
-        Object.keys(defaultColors)
-            .filter(key => !deprecatedColors.includes(key))
-            .map(key => [key, defaultColors[key as keyof typeof defaultColors]])
-    ),
-    custom: {},
-    steps: 50,
-    extraShades: {
-        0: defaultColors['white'],
-        1000: defaultColors['black'],
-    }
-}
 
 export function determineSteps(steps: number|number[]): number[] {
     if (Array.isArray(steps)) {
@@ -82,4 +75,30 @@ export function generateShades(original: { [shade: string|number]: string }, ste
         }
     }
     return additions
+}
+
+export function createPlugin(defaultConfig: (colors: Partial<DefaultColors>) => SubshadesConfig): TailwindPluginWithOptions<Partial<SubshadesConfig>> {
+    return tailwindPlugin.withOptions(
+        (options: Partial<SubshadesConfig> = {}) => function (api) {},
+        (options: Partial<SubshadesConfig> = {}) => {
+            return {
+                theme: {
+                    extend: {
+                        colors: ({ colors }) => {
+                            const defaultColors = Object.fromEntries(
+                                Object.keys(colors)
+                                    .filter(key => !deprecatedColors.includes(key))
+                                    .map(key => [key, colors[key as keyof typeof colors]])
+                            )
+                            const defaults = defaultConfig(defaultColors)
+                            const config: SubshadesConfig = {...defaults, ...options}
+                            const all = {...(config.default), ...config.custom}
+                            const steps = determineSteps(config.steps)
+                            return generateConfig(all, steps, config.extraShades, config.output)
+                        }
+                    }
+                }
+            }
+        }
+    )
 }
