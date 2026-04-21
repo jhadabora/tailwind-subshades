@@ -7,9 +7,9 @@ import {modeRgb, useMode} from "culori/fn";
 export type DefaultColors = typeof defaultColors
 
 export interface SubshadesConfig extends Partial<Record<`--color-${string}-${number}`, string>> {
-    default: { [name: string]: TailwindColorValue } | undefined,
+    default: { [name: string]: TailwindColorValue },
     custom: { [name: string]: TailwindColorValue },
-    ignore: string[],
+    ignore: string[] | string,
     steps: number|number[],
     extraShades: { [shade: string|number]: string },
     output: (color: { mode: 'rgb', r: number, g: number, b: number }) => string,
@@ -92,8 +92,23 @@ export function createPlugin(defaultConfig: (colors: Partial<DefaultColors>) => 
                             )
                             const defaults = defaultConfig(defaultColors)
                             const config: SubshadesConfig = {...defaults, ...options}
-                            const all = {...(config.default), ...config.custom}
+
+                            if (config.ignore === '*') {
+                                config.default = {}
+                            } else if (config.ignore) {
+                                if (!Array.isArray(config.ignore)) {
+                                    config.ignore = [config.ignore]
+                                }
+                                config.default = Object.fromEntries(
+                                    Object.keys(config.default)
+                                        .filter(key => !config.ignore.includes(key))
+                                        .map(key => [key, config.default[key as keyof typeof config.default]])
+                                )
+                            }
+
+                            const all = {...config.default, ...config.custom}
                             const steps = determineSteps(config.steps)
+                            console.log(generateConfig(all, steps, config.extraShades, config.output))
                             return generateConfig(all, steps, config.extraShades, config.output)
                         }
                     }
