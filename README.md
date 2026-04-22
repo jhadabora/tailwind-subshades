@@ -56,9 +56,9 @@ Colors with only one shade, such as `white`, `black`, and `current` will be igno
 
 ---
 
-Here's an image of the existing and generated shades:
+Here's an image of the available shades using the above config:
 
-!!! TODO GITHUB IMAGE !!!
+<img width="3065" height="1750" alt="image" src="https://github.com/user-attachments/assets/b2d0bb9c-b432-4e9d-afa1-7f64d9a08d52" />
 
 ### Tailwind v3
 
