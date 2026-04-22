@@ -78,7 +78,7 @@ export function generateShades(original: { [shade: string|number]: string }, ste
     return additions
 }
 
-function mergeColors(...sources: { [name: string]: TailwindColorValue }[]): { [name: string]: TailwindColorValue } {
+export function mergeColors(...sources: { [name: string]: TailwindColorValue }[]): { [name: string]: TailwindColorValue } {
     const result: { [name: string]: TailwindColorValue } = {}
 
     for (const source of sources) {

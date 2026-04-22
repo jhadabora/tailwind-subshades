@@ -1,20 +1,4 @@
-import {createPlugin, DefaultColors, SubshadesConfig,} from "./common";
-import {useMode, formatCss, modeOklch} from "culori/fn";
+import {defaultConfig} from "./lib/v4";
+import {createPlugin} from "./lib";
 
-const oklch = useMode(modeOklch)
-
-export const defaultConfig = (colors: Partial<DefaultColors>): SubshadesConfig => ({
-    default: colors,
-    custom: {},
-    ignore: [],
-    steps: 50,
-    extraShades: {
-        0: colors['white'] ?? '#fff',
-        1000: colors['black'] ?? '#000',
-    },
-    output: (color) => formatCss(oklch(color)),
-})
-
-export const plugin = createPlugin(defaultConfig)
-
-export default plugin
+export default createPlugin(defaultConfig)

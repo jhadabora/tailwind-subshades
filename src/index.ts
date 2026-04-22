@@ -1,9 +1,11 @@
-import * as mod_common from './common';
-import * as mod_v3 from './v3';
-import * as mod_v4 from './v4';
+import v3 from "./v3"
+import v4 from "./v4"
+import * as lib from "./lib"
+import * as libv3 from "./lib/v3"
+import * as libv4 from "./lib/v4"
 
-export const common = Object.freeze({...mod_common})
-export const v3 = mod_v3.plugin
-export const v4 = mod_v4.plugin
-
-export default v4
+export default Object.freeze({
+    v3: v3,
+    v4: v4,
+    lib: Object.freeze({...lib, v3: Object.freeze({...libv3}), v4: Object.freeze({...libv4})})
+})

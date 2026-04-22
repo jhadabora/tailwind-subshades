@@ -1,6 +1,6 @@
 {
   "name": "tailwind-subshades",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A plugin for Tailwind v3 and v4 for generating intermediate color steps for vanilla and custom Tailwind color tokens.",
   "keywords": [
     "tailwind",
@@ -30,11 +30,41 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "main": "./dist/v4.cjs",
+  "module": "./dist/v4.mjs",
+  "types": "./dist/v4.d.mts",
   "exports": {
     ".": {
+      "import": {
+        "types": "./dist/v4.d.mts",
+        "default": "./dist/v4.mjs"
+      },
+      "require": {
+        "types": "./dist/v4.d.cts",
+        "default": "./dist/v4.cjs"
+      }
+    },
+    "./v4": {
+      "import": {
+        "types": "./dist/v4.d.mts",
+        "default": "./dist/v4.mjs"
+      },
+      "require": {
+        "types": "./dist/v4.d.cts",
+        "default": "./dist/v4.cjs"
+      }
+    },
+    "./v3": {
+      "import": {
+        "types": "./dist/v3.d.mts",
+        "default": "./dist/v3.mjs"
+      },
+      "require": {
+        "types": "./dist/v3.d.cts",
+        "default": "./dist/v3.cjs"
+      }
+    },
+    "./index": {
       "import": {
         "types": "./dist/index.d.mts",
         "default": "./dist/index.mjs"
@@ -43,10 +73,40 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
+    },
+    "./lib": {
+      "import": {
+        "types": "./dist/lib/index.d.mts",
+        "default": "./dist/lib/index.mjs"
+      },
+      "require": {
+        "types": "./dist/lib/index.d.cts",
+        "default": "./dist/lib/index.cjs"
+      }
+    },
+    "./lib/v4": {
+      "import": {
+        "types": "./dist/lib/v4.d.mts",
+        "default": "./dist/lib/v4.mjs"
+      },
+      "require": {
+        "types": "./dist/lib/v4.d.cts",
+        "default": "./dist/lib/v4.cjs"
+      }
+    },
+    "./lib/v3": {
+      "import": {
+        "types": "./dist/lib/v3.d.mts",
+        "default": "./dist/lib/v3.mjs"
+      },
+      "require": {
+        "types": "./dist/lib/v3.d.cts",
+        "default": "./dist/lib/v3.cjs"
+      }
     }
   },
   "scripts": {
-    "build": "tsdown src/index.ts --format esm,cjs --dts",
+    "build": "tsdown src/**.ts --format esm,cjs --dts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublishOnly": "npm run build"
   },
