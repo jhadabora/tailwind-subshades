@@ -16,6 +16,7 @@ export interface SubshadesConfig extends Partial<Record<`--color-${string}-${num
 }
 
 const deprecatedColors = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray']
+const colorToken = /--color-(\w+)-(\d+)/
 
 export function determineSteps(steps: number|number[]): number[] {
     if (Array.isArray(steps)) {
@@ -77,6 +78,28 @@ export function generateShades(original: { [shade: string|number]: string }, ste
     return additions
 }
 
+function mergeColors(...sources: { [name: string]: TailwindColorValue }[]): { [name: string]: TailwindColorValue } {
+    const result: { [name: string]: TailwindColorValue } = {}
+
+    for (const source of sources) {
+        for (const key in source) {
+            const resultValue = result[key]
+            const sourceValue = source[key]
+
+            if (
+                typeof resultValue === 'object' && resultValue !== null && !Array.isArray(resultValue) && typeof resultValue !== 'function' &&
+                typeof sourceValue === 'object' && sourceValue !== null && !Array.isArray(sourceValue) && typeof sourceValue !== 'function'
+            ) {
+                result[key] = {...resultValue, ...sourceValue}
+            } else {
+                result[key] = sourceValue
+            }
+        }
+    }
+
+    return result
+}
+
 export function createPlugin(defaultConfig: (colors: Partial<DefaultColors>) => SubshadesConfig): TailwindPluginWithOptions<Partial<SubshadesConfig>> {
     return tailwindPlugin.withOptions(
         (options: Partial<SubshadesConfig> = {}) => function (api) {},
@@ -106,10 +129,18 @@ export function createPlugin(defaultConfig: (colors: Partial<DefaultColors>) => 
                                 )
                             }
 
-                            const all = {...config.default, ...config.custom}
+                            const passthrough: { [name: string]: { [shade: number]: string } } = {}
+                            const tokens = Object.keys(config)
+                                .map(key => key.match(colorToken))
+                                .filter(Boolean) as RegExpMatchArray[]
+                            for (const [token, name, shade] of tokens) {
+                                passthrough[name] ??= {}
+                                passthrough[name][Number(shade)] = config[token as keyof typeof config] as string
+                            }
+
+                            const all = mergeColors(config.default, passthrough, config.custom)
                             const steps = determineSteps(config.steps)
-                            console.log(generateConfig(all, steps, config.extraShades, config.output))
-                            return generateConfig(all, steps, config.extraShades, config.output)
+                            return mergeColors(generateConfig(all, steps, config.extraShades, config.output), passthrough)
                         }
                     }
                 }
