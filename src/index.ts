@@ -1,11 +1,5 @@
-import v3 from "./v3"
-import v4 from "./v4"
-import * as lib from "./lib"
-import * as libv3 from "./lib/v3"
-import * as libv4 from "./lib/v4"
-
-export default Object.freeze({
-    v3: v3,
-    v4: v4,
-    lib: Object.freeze({...lib, v3: Object.freeze({...libv3}), v4: Object.freeze({...libv4})})
-})
+export { default as v3 } from "./v3"
+export { default as v4 } from "./v4"
+export * as lib from "./lib"
+export * as libv3 from "./lib/v3"
+export * as libv4 from "./lib/v4"

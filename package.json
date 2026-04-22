@@ -74,6 +74,16 @@
         "default": "./dist/index.cjs"
       }
     },
+    "./nested": {
+      "import": {
+        "types": "./dist/nested.d.mts",
+        "default": "./dist/nested.mjs"
+      },
+      "require": {
+        "types": "./dist/nested.d.cts",
+        "default": "./dist/nested.cjs"
+      }
+    },
     "./lib": {
       "import": {
         "types": "./dist/lib/index.d.mts",
