@@ -6,11 +6,13 @@ This package provides a plugin for your Tailwind config that automatically gener
 
 ## Dependencies
 
-- [Tailwind](https://tailwindcss.com/) v3 or v4
 - [Node](https://nodejs.org) >=12.20.0
+- [Tailwind](https://tailwindcss.com/) v3 or v4
 - [culori](https://culorijs.org/) ^4.0.1
 
-> Tested to work in both Tailwind v3 and v4 for both CJS and ESM configs in a Next.js environment.
+> Tested in a Next.js environment with:
+>- Tailwind v3 (CJS, ESM and TS configs)
+>- Tailwind v4 (CSS, CJS, ESM and TS configs)
 
 ## Installation
 
@@ -65,7 +67,7 @@ Here's an image of the available shades using the above config:
 In your existing tailwind.config.js (or tailwind.config.ts) file:
 
 ```js
-import {v3 as subshades_v3} from "tailwind-subshades";
+import subshades from "tailwind-subshades/v3";
 
 let myCustomColors = {}
 export default {
@@ -88,7 +90,7 @@ export default {
             },
         },
     },
-    plugins: [subshades_v3({
+    plugins: [subshades({
         custom: myCustomColors,
         steps: 25, //Generate shades 25-975 in intervals of 25.
     })],
@@ -124,7 +126,7 @@ The plugin accepts the following options:
 ```
 
 ```js
-import {v3 as subshades_v3} from "tailwind-subshades";
+import subshades from "tailwind-subshades/v3";
 
 export default {
     theme: {
@@ -132,7 +134,7 @@ export default {
             colors: { 'dark-blue': { '500': '#00c' } },
         },
     },
-    plugins: [subshades_v3({
+    plugins: [subshades({
         default: {},
         custom: { 'dark-blue': { '500': '#00c' } },
         steps: 20,
@@ -151,10 +153,10 @@ export default {
 ```
 
 ```js
-import {v3 as subshades_v3} from "tailwind-subshades";
+import subshades from "tailwind-subshades/v3";
 
 export default {
-    plugins: [subshades_v3({
+    plugins: [subshades({
         steps: [25, 450, 550, 625, 993],
     })],
 }
@@ -163,10 +165,10 @@ export default {
 #### CommonJS Require
 
 ```js
-const subshades = require("tailwind-subshades");
+const subshades = require("tailwind-subshades/v3");
 
 module.exports = {
-    plugins: [subshades.v3({})],
+    plugins: [subshades({})],
 }
 ```
 
@@ -176,7 +178,7 @@ module.exports = {
 // @config "tailwind.config.ts"
 
 import type { Config } from 'tailwindcss'
-import {v4 as subshades_v4} from "tailwind-subshades"
+import subshades from "tailwind-subshades/v4"
 
 let myCustomColors = {}
 export default {
@@ -185,7 +187,7 @@ export default {
             ...
         },
     },
-    plugins: [subshades_v4({
+    plugins: [subshades({
         custom: colors,
         steps: 25,
     })],
@@ -197,7 +199,7 @@ export default {
 Currently only possible in tailwind.config.*
 
 ```js
-import {v3 as subshades_v3} from "tailwind-subshades";
+import subshades from "tailwind-subshades";
 
 export default {
     theme: {
@@ -205,7 +207,7 @@ export default {
             colors: { 'dark-blue': { '500': '#00c' } },
         },
     },
-    plugins: [subshades_v3({
+    plugins: [subshades({
         default: {},
         custom: { 'dark-blue': { '500': '#00c' } },
         extraShades: { 0: "#f80", 900: "#f0f", 1000: "#ff0" },
