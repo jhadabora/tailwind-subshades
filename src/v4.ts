@@ -1,8 +1,7 @@
 import {createPlugin, DefaultColors, SubshadesConfig,} from "./common";
-import {useMode, modeRgb, formatHex, formatCss} from "culori/fn";
-import defaultColors from "tailwindcss/colors";
+import {useMode, formatCss, modeOklch} from "culori/fn";
 
-const rgb = useMode(modeRgb)
+const oklch = useMode(modeOklch)
 
 export const defaultConfig = (colors: Partial<DefaultColors>): SubshadesConfig => ({
     default: colors,
@@ -13,7 +12,7 @@ export const defaultConfig = (colors: Partial<DefaultColors>): SubshadesConfig =
         0: colors['white'] ?? '#fff',
         1000: colors['black'] ?? '#000',
     },
-    output: (color) => formatHex(rgb(color)),
+    output: (color) => formatCss(oklch(color)),
 })
 
 export const plugin = createPlugin(defaultConfig)

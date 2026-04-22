@@ -1,28 +1,22 @@
 import defaultColors from "tailwindcss/colors"
+import tailwindPlugin from "tailwindcss/plugin";
+import type {TailwindPluginWithOptions} from "tailwindcss/plugin";
 import {TailwindColorValue} from "tailwindcss/tailwind-config";
 import {modeRgb, useMode} from "culori/fn";
 
-export interface SubshadesConfig {
+export type DefaultColors = typeof defaultColors
+
+export interface SubshadesConfig extends Partial<Record<`--color-${string}-${number}`, string>> {
     default: { [name: string]: TailwindColorValue },
     custom: { [name: string]: TailwindColorValue },
+    ignore: string[] | string,
     steps: number|number[],
-    extraShades: { [shade: string|number]: string }
+    extraShades: { [shade: string|number]: string },
+    output: (color: { mode: 'rgb', r: number, g: number, b: number }) => string,
 }
 
 const deprecatedColors = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray']
-export const defaultConfig: SubshadesConfig = {
-    default: Object.fromEntries(
-        Object.keys(defaultColors)
-            .filter(key => !deprecatedColors.includes(key))
-            .map(key => [key, defaultColors[key as keyof typeof defaultColors]])
-    ),
-    custom: {},
-    steps: 50,
-    extraShades: {
-        0: defaultColors['white'],
-        1000: defaultColors['black'],
-    }
-}
+const colorToken = /--color-(\w+)-(\d+)/
 
 export function determineSteps(steps: number|number[]): number[] {
     if (Array.isArray(steps)) {
@@ -82,4 +76,75 @@ export function generateShades(original: { [shade: string|number]: string }, ste
         }
     }
     return additions
+}
+
+function mergeColors(...sources: { [name: string]: TailwindColorValue }[]): { [name: string]: TailwindColorValue } {
+    const result: { [name: string]: TailwindColorValue } = {}
+
+    for (const source of sources) {
+        for (const key in source) {
+            const resultValue = result[key]
+            const sourceValue = source[key]
+
+            if (
+                typeof resultValue === 'object' && resultValue !== null && !Array.isArray(resultValue) && typeof resultValue !== 'function' &&
+                typeof sourceValue === 'object' && sourceValue !== null && !Array.isArray(sourceValue) && typeof sourceValue !== 'function'
+            ) {
+                result[key] = {...resultValue, ...sourceValue}
+            } else {
+                result[key] = sourceValue
+            }
+        }
+    }
+
+    return result
+}
+
+export function createPlugin(defaultConfig: (colors: Partial<DefaultColors>) => SubshadesConfig): TailwindPluginWithOptions<Partial<SubshadesConfig>> {
+    return tailwindPlugin.withOptions(
+        (options: Partial<SubshadesConfig> = {}) => function (api) {},
+        (options: Partial<SubshadesConfig> = {}) => {
+            return {
+                theme: {
+                    extend: {
+                        colors: ({ colors }) => {
+                            const defaultColors = Object.fromEntries(
+                                Object.keys(colors)
+                                    .filter(key => !deprecatedColors.includes(key))
+                                    .map(key => [key, colors[key as keyof typeof colors]])
+                            )
+                            const defaults = defaultConfig(defaultColors)
+                            const config: SubshadesConfig = {...defaults, ...options}
+
+                            if (config.ignore === '*') {
+                                config.default = {}
+                            } else if (config.ignore) {
+                                if (!Array.isArray(config.ignore)) {
+                                    config.ignore = [config.ignore]
+                                }
+                                config.default = Object.fromEntries(
+                                    Object.keys(config.default)
+                                        .filter(key => !config.ignore.includes(key))
+                                        .map(key => [key, config.default[key as keyof typeof config.default]])
+                                )
+                            }
+
+                            const passthrough: { [name: string]: { [shade: number]: string } } = {}
+                            const tokens = Object.keys(config)
+                                .map(key => key.match(colorToken))
+                                .filter(Boolean) as RegExpMatchArray[]
+                            for (const [token, name, shade] of tokens) {
+                                passthrough[name] ??= {}
+                                passthrough[name][Number(shade)] = config[token as keyof typeof config] as string
+                            }
+
+                            const all = mergeColors(config.default, passthrough, config.custom)
+                            const steps = determineSteps(config.steps)
+                            return mergeColors(generateConfig(all, steps, config.extraShades, config.output), passthrough)
+                        }
+                    }
+                }
+            }
+        }
+    )
 }

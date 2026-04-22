@@ -1,6 +1,6 @@
 {
   "name": "tailwind-subshades",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A plugin for Tailwind v3 and v4 for generating intermediate color steps for vanilla and custom Tailwind color tokens.",
   "keywords": [
     "tailwind",

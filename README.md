@@ -22,10 +22,50 @@ Substitute `npm` for your package manager of choice.
 
 ## Quick Start
 
+### Tailwind v4
+
+In your Tailwind v4 CSS file:
+
+```css
+@import "tailwindcss";
+
+@plugin "tailwind-subshades" {
+    /* Generate shades 25-975 in intervals of 25. */
+    steps: 25;
+    
+    /* Move your custom colors from @theme to this declaration to generate additional shades. */
+    --color-malachite-50: #f4fcf1;
+    --color-malachite-100: #e2fade;
+    --color-malachite-200: #c7f4be;
+    --color-malachite-300: #99e98c;
+    --color-malachite-400: #5ed44a;
+    --color-malachite-500: oklch(0.6998 0.2095 141.12);
+    --color-malachite-600: #309b1e;
+    --color-malachite-700: #287a1b;
+    --color-malachite-800: #23611a;
+    --color-malachite-900: #1d5017;
+    --color-malachite-950: #0b2c07;
+}
+```
+
+With the configuration above, you can now use classes like `bg-custom-550`, `text-blue-25`, and `hover:border-purple-675/50` in your code.
+
+The plugin adds these generated shades to the `theme.extend.colors` path in your Tailwind config, so any utilities that use theme colors will support the extended colors.
+
+Colors with only one shade, such as `white`, `black`, and `current` will be ignored.
+
+---
+
+Here's an image of the existing and generated shades:
+
+!!! TODO GITHUB IMAGE !!!
+
+### Tailwind v3
+
 In your existing tailwind.config.js (or tailwind.config.ts) file:
 
 ```js
-import subshades from "tailwind-subshades";
+import {v3 as subshades_v3} from "tailwind-subshades";
 
 let myCustomColors = {}
 export default {
@@ -48,31 +88,77 @@ export default {
             },
         },
     },
-    plugins: [subshades.v3({
+    plugins: [subshades_v3({
         custom: myCustomColors,
         steps: 25, //Generate shades 25-975 in intervals of 25.
     })],
 }
 ```
 
-With the configuration above, you can now use classes like `bg-malachite-550`, `text-blue-25`, and `hover:border-purple-675/50` in your code.
-
-The plugin adds these generated shades to the `theme.extend.colors` path in your Tailwind config, so any utilities that use theme colors will support the extended colors.
-
-Colors with only one shade, such as `white`, `black`, and `current` will be ignored.
-
 ## Configuration
 
 The plugin accepts the following options:
 
-| Key         | Default                           | Description                                                                                                                                                                                             |
-|-------------|-----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| custom      | `{}`                              | Your custom Tailwind colors that you want intermediate color shades generated for. Only colors with numeric shades are extended by the plugin.                                                          |
-| steps       | 50                                | The interval of shades to generate between 0 and 1000 (exclusive). You can also pass an array of numbers to generate those shades specifically.                                                         |
-| default     | Object of Tailwind default colors | The default colors in the Tailwind palette. You can override this to stop the plugin generating intermediate shades for the default colors.                                                             |
-| extraShades | `{0: "#fff", 1000: "#000"}`       | These shades are added to each color internally by the plugin to generate lighter colors than the first defined shade (usually 50), and darker colors than the last defined shade (usually 900 or 950). |
+| Key         | Default                                                     | Description                                                                                                                                                                                             |
+|-------------|-------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| custom      | `{}`                                                        | Your custom Tailwind colors that you want intermediate color shades generated for. Only colors with numeric shades are extended by the plugin.                                                          |
+| steps       | 50                                                          | The interval of shades to generate between 0 and 1000 (exclusive). You can also pass an array of numbers to generate those shades specifically.                                                         |
+| default     | Object of Tailwind default colors                           | The default colors in the Tailwind palette. You can override this with a pruned or empty object to stop the plugin generating intermediate shades for the default colors.                               |
+| ignore      | `[]`                                                        | A list of colors to ignore from the default Tailwind palette. You can use the string '*' to stop the plugin generating intermediate shades for all of the default colors.                               |
+| extraShades | `{0: "#fff", 1000: "#000"}`                                 | These shades are added to each color internally by the plugin to generate lighter colors than the first defined shade (usually 50), and darker colors than the last defined shade (usually 900 or 950). |
+| output      | Floating RGB values to RGB hex or oklch format (via Culori) | You can override the format of each generated color that is output to the Tailwind theme. The function takes an object with `r`, `g` and `b` set to floating point numbers between 0 and 1.             |
 
 ### Example Configurations
+
+#### Only Generate Shades for Custom Colors
+
+```css
+@import "tailwindcss";
+
+@plugin "tailwind-subshades" {
+    ignore: "*";
+    steps: 20;
+
+    --color-dark-blue-500: #00c;
+}
+```
+
+```js
+import {v3 as subshades_v3} from "tailwind-subshades";
+
+export default {
+    theme: {
+        extend: {
+            colors: { 'dark-blue': { '500': '#00c' } },
+        },
+    },
+    plugins: [subshades_v3({
+        default: {},
+        custom: { 'dark-blue': { '500': '#00c' } },
+        steps: 20,
+    })],
+}
+```
+
+#### Array of Shades
+
+```css
+@import "tailwindcss";
+
+@plugin "tailwind-subshades" {
+    steps: 25, 450, 550, 625, 993;
+}
+```
+
+```js
+import {v3 as subshades_v3} from "tailwind-subshades";
+
+export default {
+    plugins: [subshades_v3({
+        steps: [25, 450, 550, 625, 993],
+    })],
+}
+```
 
 #### CommonJS Require
 
@@ -84,39 +170,34 @@ module.exports = {
 }
 ```
 
-#### Only Generate Shades for Custom Colors
+#### Legacy Tailwind Config in v4
 
-```js
-import subshades from "tailwind-subshades";
+```typescript
+// @config "tailwind.config.ts"
 
+import type { Config } from 'tailwindcss'
+import {v4 as subshades_v4} from "tailwind-subshades"
+
+let myCustomColors = {}
 export default {
     theme: {
         extend: {
-            colors: { 'dark-blue': { '500': '#00c' } },
+            ...
         },
     },
-    plugins: [subshades.v3({
-        default: {},
-        custom: { 'dark-blue': { '500': '#00c' } },
-        steps: 20,
+    plugins: [subshades_v4({
+        custom: colors,
+        steps: 25,
     })],
-}
-```
-
-#### Array of Shades
-
-```js
-export default {
-    plugins: [subshades.v3({
-        steps: [25, 450, 550, 625, 993],
-    })],
-}
+} satisfies Config
 ```
 
 #### Set Color Boundaries
 
+Currently only possible in tailwind.config.*
+
 ```js
-import subshades from "tailwind-subshades";
+import {v3 as subshades_v3} from "tailwind-subshades";
 
 export default {
     theme: {
@@ -124,7 +205,7 @@ export default {
             colors: { 'dark-blue': { '500': '#00c' } },
         },
     },
-    plugins: [subshades.v3({
+    plugins: [subshades_v3({
         default: {},
         custom: { 'dark-blue': { '500': '#00c' } },
         extraShades: { 0: "#f80", 900: "#f0f", 1000: "#ff0" },
