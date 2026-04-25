@@ -3,7 +3,7 @@ import defaultColors from "tailwindcss/colors"
 import {defaultConfig} from "../../src/lib/v4";
 import {converter, parse} from "culori";
 
-describe('defaultConfig', () => {
+describe('v4 defaultConfig', () => {
     const config = defaultConfig(defaultColors)
 
     test('returns a config object', () => {

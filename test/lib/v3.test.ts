@@ -2,7 +2,7 @@ import {assert, describe, expect, test} from "vitest";
 import defaultColors from "tailwindcss/colors"
 import {defaultConfig} from "../../src/lib/v3";
 
-describe('defaultConfig', () => {
+describe('v3 defaultConfig', () => {
     const config = defaultConfig(defaultColors)
 
     test('returns a config object', () => {
