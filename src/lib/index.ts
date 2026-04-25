@@ -44,9 +44,14 @@ export function generateShades(original: { [shade: string|number]: string }, ste
 
         const prevShade = Math.max(...shades.filter(n => n < step))
         const nextShade = Math.min(...shades.filter(n => n > step))
+        const prevColor = original[prevShade]
+        const nextColor = original[nextShade]
+        if (!prevColor || !nextColor) {
+            continue
+        }
 
         const weight = (step - prevShade) / (nextShade - prevShade)
-        const result = formula(original[prevShade], original[nextShade], weight)
+        const result = formula(prevColor, nextColor, weight)
         if (!result) {
             continue
         }

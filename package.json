@@ -1,6 +1,6 @@
 {
   "name": "tailwind-subshades",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A plugin for Tailwind v3 and v4 for generating intermediate color steps for vanilla and custom Tailwind color tokens.",
   "keywords": [
     "tailwind",
@@ -129,7 +129,6 @@
     "vitest": "^4.1.5"
   },
   "dependencies": {
-    "culori": "^4.0.2",
     "tailwindcss": "^3.0 || ^4.0"
   },
   "engines": {
@@ -140,5 +139,8 @@
     "workspace/3x",
     "workspace/40",
     "workspace/4x"
-  ]
+  ],
+  "optionalDependencies": {
+    "culori": "^4.0.2"
+  }
 }
