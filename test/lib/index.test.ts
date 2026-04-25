@@ -1,23 +1,7 @@
 import {assert, describe, expect, test, vi} from "vitest";
 import * as lib from "../../src/lib";
 import defaultColors from "tailwindcss/colors"
-
-const steps50 = [...Array((1000/50)-1).keys()].map(n => (n+1) * 50)
-
-const malachite = {
-    '50': '#f4fcf1',
-    '100': '#e2fade',
-    '200': '#c7f4be',
-    '300': '#99e98c',
-    '400': '#5ed44a',
-    '500': '#40bc2b',
-    '600': '#309b1e',
-    '700': '#287a1b',
-    '800': '#23611a',
-    '900': '#1d5017',
-    '950': '#0b2c07',
-}
-const dark_blue = "#00c"
+import {colorDarkBlue, colorMalachite, steps50} from "../util";
 
 describe('module structure', () => {
     test('exports named exports', () => {
@@ -214,7 +198,7 @@ describe('generateShades', () => {
 
 describe('generateConfig', () => {
     test('runs generateShades for each color', () => {
-        const colors = {red: defaultColors.red, blue: {400: defaultColors.blue[400], 600: defaultColors.blue[600]}, malachite}
+        const colors = {red: defaultColors.red, blue: {400: defaultColors.blue[400], 600: defaultColors.blue[600]}, malachite: colorMalachite}
         const generated = lib.generateConfig(colors, steps50, {}, rgb => 'noop')
 
         for (const [name, shades] of Object.entries(colors)) {
@@ -225,7 +209,7 @@ describe('generateConfig', () => {
     })
 
     test('skips non-object colors', () => {
-        const colors = {malachite, white: defaultColors.white, fn: (props: { opacityVariable: string, opacityValue: string }) => 'noop'}
+        const colors = {malachite: colorMalachite, white: defaultColors.white, fn: (props: { opacityVariable: string, opacityValue: string }) => 'noop'}
         const generated = lib.generateConfig(colors, steps50, {}, rgb => 'noop')
 
         expect(Object.keys(generated)).toStrictEqual(['malachite'])
@@ -293,22 +277,22 @@ describe('mergeColors', () => {
     test('later items take precedence', () => {
         const merged = lib.mergeColors({
             red: defaultColors.orange,
-            malachite: {400: malachite[400], 500: malachite[600]},
+            malachite: {400: colorMalachite[400], 500: colorMalachite[600]},
         }, {
             red: defaultColors.red,
-            malachite: {500: malachite[500]},
+            malachite: {500: colorMalachite[500]},
         })
         expect(merged).toStrictEqual({
             red: defaultColors.red,
-            malachite: {400: malachite[400], 500: malachite[500]},
+            malachite: {400: colorMalachite[400], 500: colorMalachite[500]},
         })
     })
 
     test('later non-shaded items replace', () => {
-        const malachiteFn = (props: object) => malachite[500]
+        const malachiteFn = (props: object) => colorMalachite[500]
         const merged = lib.mergeColors({
             black: defaultColors.red,
-            malachite: {400: malachite[400], 500: malachite[500]},
+            malachite: {400: colorMalachite[400], 500: colorMalachite[500]},
         }, {
             black: defaultColors.black,
             malachite: malachiteFn,
@@ -320,17 +304,17 @@ describe('mergeColors', () => {
     })
 
     test('earlier non-shaded items are replaced', () => {
-        const malachiteFn = (props: object) => malachite[500]
+        const malachiteFn = (props: object) => colorMalachite[500]
         const merged = lib.mergeColors({
             black: defaultColors.black,
             malachite: malachiteFn,
         }, {
             black: defaultColors.red,
-            malachite: {400: malachite[400], 500: malachite[500]},
+            malachite: {400: colorMalachite[400], 500: colorMalachite[500]},
         })
         expect(merged).toStrictEqual({
             black: defaultColors.red,
-            malachite: {400: malachite[400], 500: malachite[500]},
+            malachite: {400: colorMalachite[400], 500: colorMalachite[500]},
         })
     })
 })
@@ -367,8 +351,8 @@ describe('createPlugin', () => {
             output: rgb => 'noop',
         }))({})
 
-        const generated = plugin.config.theme.extend.colors({colors: {malachite}})
-        expect(generated).toStrictEqual(lib.generateConfig({malachite}, steps50, {}, rgb => 'noop'))
+        const generated = plugin.config.theme.extend.colors({colors: {malachite: colorMalachite}})
+        expect(generated).toStrictEqual(lib.generateConfig({malachite: colorMalachite}, steps50, {}, rgb => 'noop'))
     })
 
     test('replaces default options with user options', () => {
@@ -381,11 +365,11 @@ describe('createPlugin', () => {
             output: rgb => 'noop',
         }))({
             default: {},
-            custom: {malachite},
+            custom: {malachite: colorMalachite},
         })
 
         const generated = plugin.config.theme.extend.colors({colors: defaultColors})
-        expect(generated).toStrictEqual(lib.generateConfig({malachite}, steps50, {}, rgb => 'noop'))
+        expect(generated).toStrictEqual(lib.generateConfig({malachite: colorMalachite}, steps50, {}, rgb => 'noop'))
     })
 
     test('drops default colors listed in ignore field', () => {
@@ -398,7 +382,7 @@ describe('createPlugin', () => {
             output: rgb => 'noop',
         }))({
             ignore: ['red', 'malachite'],
-            custom: {malachite},
+            custom: {malachite: colorMalachite},
         })
 
         const generated = plugin.config.theme.extend.colors({colors: {red: defaultColors.red, blue: defaultColors.blue}})
@@ -415,7 +399,7 @@ describe('createPlugin', () => {
             output: rgb => 'noop',
         }))({
             ignore: '*',
-            custom: {malachite},
+            custom: {malachite: colorMalachite},
         })
 
         const generated = plugin.config.theme.extend.colors({colors: {red: defaultColors.red, blue: defaultColors.blue}})
@@ -448,7 +432,7 @@ describe('createPlugin', () => {
             output: rgb => 'noop',
         }))({
             default: {
-                lightBlue: malachite,
+                lightBlue: colorMalachite,
             },
         })
 
@@ -465,13 +449,13 @@ describe('createPlugin', () => {
             extraShades: {0: 'white', 1000: 'black'},
             output: rgb => `${rgb.r};${rgb.g};${rgb.b}`,
         }))({
-            '--color-dark-blue-800': dark_blue,
-            '--not-a-color': dark_blue
+            '--color-dark-blue-800': colorDarkBlue,
+            '--not-a-color': colorDarkBlue
         } as Record<`--color-${string}-${number}`, string>)
 
         const generated = plugin.config.theme.extend.colors({colors: {}})
         expect(Object.keys(generated)).toStrictEqual(['dark-blue'])
-        expect(generated['dark-blue'][800]).toBe(dark_blue)
+        expect(generated['dark-blue'][800]).toBe(colorDarkBlue)
         const components900 = generated['dark-blue'][900].split(';').map(Number)
         const components950 = generated['dark-blue'][950].split(';').map(Number)
         expect(components950[2]).toBeGreaterThan(0)

@@ -1,0 +1,5 @@
+bg-red-500/50
+bg-red-550/50
+bg-malachite-400/50
+bg-malachite-500/50
+bg-malachite-550/50
