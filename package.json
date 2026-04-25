@@ -133,13 +133,12 @@
     "tailwindcss": "^3.0 || ^4.0"
   },
   "engines": {
-    "node": ">=12.20.0"
+    "node": ">=20.19.0"
   },
   "workspaces": [
     "workspace/30",
     "workspace/3x",
     "workspace/40",
-    "workspace/4x",
-    "workspaces/30"
+    "workspace/4x"
   ]
 }

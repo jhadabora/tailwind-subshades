@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['12.20.0', '20.x', 'latest']
+        node-version: ['20.19.0', 'latest']
 
     steps:
       - name: Checkout Repository
