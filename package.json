@@ -117,20 +117,28 @@
   },
   "scripts": {
     "build": "tsdown",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@types/culori": "^4.0.1",
+    "@types/node": "^25.6.0",
     "@types/tailwindcss": "^3.0.11",
     "tsdown": "^0.21.9",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5"
   },
   "dependencies": {
     "culori": "^4.0.2",
     "tailwindcss": "^3.0 || ^4.0"
   },
   "engines": {
-    "node": ">=12.20.0"
-  }
+    "node": ">=20.19.0"
+  },
+  "workspaces": [
+    "workspace/30",
+    "workspace/3x",
+    "workspace/40",
+    "workspace/4x"
+  ]
 }

@@ -50,7 +50,7 @@ In your Tailwind v4 CSS file:
 }
 ```
 
-With the configuration above, you can now use classes like `bg-custom-550`, `text-blue-25`, and `hover:border-purple-675/50` in your code.
+With the configuration above, you can now use classes like `bg-malachite-550`, `text-blue-25`, and `hover:border-purple-675/50` in your code.
 
 The plugin adds these generated shades to the `theme.extend.colors` path in your Tailwind config, so any utilities that use theme colors will support the extended colors.
 

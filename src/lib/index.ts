@@ -1,8 +1,9 @@
 import defaultColors from "tailwindcss/colors"
-import tailwindPlugin from "tailwindcss/plugin";
+import tailwindPlugin, {TailwindPluginWithOptionsFn} from "tailwindcss/plugin";
 import type {TailwindPluginWithOptions} from "tailwindcss/plugin";
 import {TailwindColorValue} from "tailwindcss/tailwind-config";
 import {modeRgb, useMode} from "culori/fn";
+import {parse} from "culori";
 
 export type DefaultColors = typeof defaultColors
 
@@ -16,11 +17,14 @@ export interface SubshadesConfig extends Partial<Record<`--color-${string}-${num
 }
 
 const deprecatedColors = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray']
-const colorToken = /--color-(\w+)-(\d+)/
+const colorToken = /^--color-([\w-]+)-(\d+)$/
 
 export function determineSteps(steps: number|number[]): number[] {
     if (Array.isArray(steps)) {
         return steps
+    }
+    if (steps <= 0 || steps > 1000) {
+        return []
     }
     const output = []
     for (let i = steps; i < 1000; i += steps) {
@@ -55,11 +59,11 @@ export function generateShades(original: { [shade: string|number]: string }, ste
             continue
         }
 
-        const prevShade = Math.max(0, ...shades.filter(n => n < step))
-        const nextShade = Math.min(1000, ...shades.filter(n => n > step))
+        const prevShade = Math.max(...shades.filter(n => n < step))
+        const nextShade = Math.min(...shades.filter(n => n > step))
 
-        const prevParse = rgb(original[prevShade])
-        const nextParse = rgb(original[nextShade])
+        const prevParse = rgb(parse(original[prevShade]))
+        const nextParse = rgb(parse(original[nextShade]))
         if (!prevParse || !nextParse) {
             continue
         }
@@ -100,14 +104,14 @@ export function mergeColors(...sources: { [name: string]: TailwindColorValue }[]
     return result
 }
 
-export function createPlugin(defaultConfig: (colors: Partial<DefaultColors>) => SubshadesConfig): TailwindPluginWithOptions<Partial<SubshadesConfig>> {
+export function createPlugin(defaultConfig: (colors: Partial<DefaultColors>) => SubshadesConfig): TailwindPluginWithOptionsFn<Partial<SubshadesConfig>> {
     return tailwindPlugin.withOptions(
         (options: Partial<SubshadesConfig> = {}) => function (api) {},
         (options: Partial<SubshadesConfig> = {}) => {
             return {
                 theme: {
                     extend: {
-                        colors: ({ colors }) => {
+                        colors: ({ colors }: { colors: DefaultColors }) => {
                             const defaultColors = Object.fromEntries(
                                 Object.keys(colors)
                                     .filter(key => !deprecatedColors.includes(key))

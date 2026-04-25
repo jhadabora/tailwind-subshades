@@ -1,0 +1,17 @@
+{
+  "name": "40",
+  "version": "4.0.0",
+  "description": "",
+  "license": "MIT",
+  "author": "jhadabora",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest"
+  },
+  "private": true,
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.0.7",
+    "tailwindcss": "4.0.7"
+  }
+}
