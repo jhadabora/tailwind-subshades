@@ -25,22 +25,22 @@ describe('determineSteps', () => {
         const range = lib.determineSteps(value)
         expect(range[0]).toBe(value)
         expect(range[range.length - 1]).toBe(1000 - value)
-        expect(range).toEqual([...Array((1000/value)-1).keys()].map(n => (n+1) * value))
+        expect(range).toStrictEqual([...Array((1000/value)-1).keys()].map(n => (n+1) * value))
     })
 
     test.for([33, 66, 97, 92, 11, 17])('expands non-divisble %i within 0-1000', (value) => {
         const range = lib.determineSteps(value)
         expect(range[0]).toBe(value)
         expect(range[range.length - 1]).toBeLessThan(1000)
-        expect(range).toEqual([...Array(Math.ceil(1000/value)-1).keys()].map(n => (n+1) * value))
+        expect(range).toStrictEqual([...Array(Math.ceil(1000/value)-1).keys()].map(n => (n+1) * value))
     })
 
     test.for([1001, 1000, 0, -1, -1001])('returns empty array for invalid %i', (value) => {
-        expect(lib.determineSteps(value)).toEqual([])
+        expect(lib.determineSteps(value)).toStrictEqual([])
     })
 
     test.for([steps50, [500], [0, 1000], [-10, 1010], []])('returns array in place', (values) => {
-        expect(lib.determineSteps(values)).toEqual(values)
+        expect(lib.determineSteps(values)).toStrictEqual(values)
     })
 })
 
@@ -134,7 +134,7 @@ describe('generateShades', () => {
         const rgb = lib.generateShades(colors, [25], rgb => `${rgb.r};${rgb.g};${rgb.b}`)
         const components = Object.fromEntries(Object.entries(rgb).map(([key, rgb]) => [key, rgb.split(';').map(Number)]))
         const keys = Object.keys(components)
-        expect(keys).toEqual(['25'])
+        expect(keys).toStrictEqual(['25'])
         expect(components[25][0]).toBeCloseTo(1.0)
         expect(components[25][1]).toBeCloseTo(0.5)
         expect(components[25][2]).toBeCloseTo(0.5)
@@ -149,7 +149,7 @@ describe('generateShades', () => {
         const rgb = lib.generateShades(colors, steps50, rgb => `${rgb.r};${rgb.g};${rgb.b}`)
         const components = Object.fromEntries(Object.entries(rgb).map(([key, rgb]) => [key, rgb.split(';').map(Number)]))
         const keys = Object.keys(components)
-        expect(keys).toEqual(['50', '150'])
+        expect(keys).toStrictEqual(['50', '150'])
     })
 
     test('returns shades out of 0-1000', () => {
@@ -161,7 +161,7 @@ describe('generateShades', () => {
         const rgb = lib.generateShades(colors, [-200, -50], rgb => `${rgb.r};${rgb.g};${rgb.b}`)
         const components = Object.fromEntries(Object.entries(rgb).map(([key, rgb]) => [key, rgb.split(';').map(Number)]))
         const keys = Object.keys(components)
-        expect(keys).toEqual(['-200', '-50'])
+        expect(keys).toStrictEqual(['-200', '-50'])
         expect(components[-200][0]).toBeCloseTo(1.0)
         expect(components[-200][1]).toBeCloseTo(0.5)
         expect(components[-200][2]).toBeCloseTo(0.5)
@@ -191,13 +191,13 @@ describe('generateShades', () => {
             500: defaultColors.red[500],
         }
         const rgb = lib.generateShades(colors, steps50, rgb => 'noop')
-        expect(rgb).toEqual({})
+        expect(rgb).toStrictEqual({})
     })
 
     test('returns empty object for no colors', () => {
         const colors: { [shade: number]: string } = {}
         const rgb = lib.generateShades(colors, steps50, rgb => 'noop')
-        expect(rgb).toEqual({})
+        expect(rgb).toStrictEqual({})
     })
 })
 
@@ -209,7 +209,7 @@ describe('generateConfig', () => {
         for (const [name, shades] of Object.entries(colors)) {
             const actual = lib.generateShades(shades, steps50, rgb => 'noop')
             expect(Object.keys(generated[name]).length).toBeGreaterThan(0)
-            expect(generated[name]).toEqual(actual)
+            expect(generated[name]).toStrictEqual(actual)
         }
     })
 
@@ -217,7 +217,7 @@ describe('generateConfig', () => {
         const colors = {malachite, white: defaultColors.white, fn: (props: { opacityVariable: string, opacityValue: string }) => 'noop'}
         const generated = lib.generateConfig(colors, steps50, {}, rgb => 'noop')
 
-        expect(Object.keys(generated)).toEqual(['malachite'])
+        expect(Object.keys(generated)).toStrictEqual(['malachite'])
         assert.isObject(generated.malachite)
     })
 
@@ -229,7 +229,7 @@ describe('generateConfig', () => {
             1000: defaultColors.black,
         }, rgb => 'noop')
 
-        expect(none.red).toEqual({})
+        expect(none.red).toStrictEqual({})
         expect(applied.red[250]).toBe('noop')
         expect(applied.red[750]).toBe('noop')
         assert.isUndefined(applied.red[0])
@@ -240,7 +240,7 @@ describe('generateConfig', () => {
         const colors = {}
         const generated = lib.generateConfig(colors, steps50, {}, rgb => 'noop')
 
-        expect(generated).toEqual({})
+        expect(generated).toStrictEqual({})
     })
 });
 
@@ -254,7 +254,7 @@ describe('mergeColors', () => {
         }, {
             pink: defaultColors.pink,
         })
-        expect(merged).toEqual({
+        expect(merged).toStrictEqual({
             red: defaultColors.red,
             green: defaultColors.green,
             blue: defaultColors.blue,
@@ -271,7 +271,7 @@ describe('mergeColors', () => {
         }}, {red: {
             400: defaultColors.red[400],
         }})
-        expect(merged).toEqual({red: {
+        expect(merged).toStrictEqual({red: {
             100: defaultColors.red[100],
             200: defaultColors.red[200],
             300: defaultColors.red[300],
@@ -287,7 +287,7 @@ describe('mergeColors', () => {
             red: defaultColors.red,
             malachite: {500: malachite[500]},
         })
-        expect(merged).toEqual({
+        expect(merged).toStrictEqual({
             red: defaultColors.red,
             malachite: {400: malachite[400], 500: malachite[500]},
         })
@@ -302,7 +302,7 @@ describe('mergeColors', () => {
             black: defaultColors.black,
             malachite: malachiteFn,
         })
-        expect(merged).toEqual({
+        expect(merged).toStrictEqual({
             black: defaultColors.black,
             malachite: malachiteFn,
         })
@@ -317,7 +317,7 @@ describe('mergeColors', () => {
             black: defaultColors.red,
             malachite: {400: malachite[400], 500: malachite[500]},
         })
-        expect(merged).toEqual({
+        expect(merged).toStrictEqual({
             black: defaultColors.red,
             malachite: {400: malachite[400], 500: malachite[500]},
         })
@@ -357,7 +357,7 @@ describe('createPlugin', () => {
         }))({})
 
         const generated = plugin.config.theme.extend.colors({colors: {malachite}})
-        expect(generated).toEqual(lib.generateConfig({malachite}, steps50, {}, rgb => 'noop'))
+        expect(generated).toStrictEqual(lib.generateConfig({malachite}, steps50, {}, rgb => 'noop'))
     })
 
     test('replaces default options with user options', () => {
@@ -374,7 +374,7 @@ describe('createPlugin', () => {
         })
 
         const generated = plugin.config.theme.extend.colors({colors: defaultColors})
-        expect(generated).toEqual(lib.generateConfig({malachite}, steps50, {}, rgb => 'noop'))
+        expect(generated).toStrictEqual(lib.generateConfig({malachite}, steps50, {}, rgb => 'noop'))
     })
 
     test('drops default colors listed in ignore field', () => {
@@ -391,7 +391,7 @@ describe('createPlugin', () => {
         })
 
         const generated = plugin.config.theme.extend.colors({colors: {red: defaultColors.red, blue: defaultColors.blue}})
-        expect(Object.keys(generated)).toEqual(['blue', 'malachite'])
+        expect(Object.keys(generated)).toStrictEqual(['blue', 'malachite'])
     })
 
     test('drops all default colors with ignore wildcard', () => {
@@ -408,7 +408,7 @@ describe('createPlugin', () => {
         })
 
         const generated = plugin.config.theme.extend.colors({colors: {red: defaultColors.red, blue: defaultColors.blue}})
-        expect(Object.keys(generated)).toEqual(['malachite'])
+        expect(Object.keys(generated)).toStrictEqual(['malachite'])
     })
 
     test('drops deprecated colors from default config', () => {
@@ -442,7 +442,7 @@ describe('createPlugin', () => {
         })
 
         const generated = plugin.config.theme.extend.colors({colors: {}})
-        expect(Object.keys(generated)).toEqual(['lightBlue'])
+        expect(Object.keys(generated)).toStrictEqual(['lightBlue'])
     })
 
     test('allows passthrough of v4 color tokens', () => {
@@ -454,13 +454,13 @@ describe('createPlugin', () => {
             extraShades: {0: 'white', 1000: 'black'},
             output: rgb => `${rgb.r};${rgb.g};${rgb.b}`,
         }))({
-            '--color-dark-blue-800': '#00c',
-            '--not-a-color': '#00c'
+            '--color-dark-blue-800': dark_blue,
+            '--not-a-color': dark_blue
         } as Record<`--color-${string}-${number}`, string>)
 
         const generated = plugin.config.theme.extend.colors({colors: {}})
-        expect(Object.keys(generated)).toEqual(['dark-blue'])
-        expect(generated['dark-blue'][800]).toBe('#00c')
+        expect(Object.keys(generated)).toStrictEqual(['dark-blue'])
+        expect(generated['dark-blue'][800]).toBe(dark_blue)
         const components900 = generated['dark-blue'][900].split(';').map(Number)
         const components950 = generated['dark-blue'][950].split(';').map(Number)
         expect(components950[2]).toBeGreaterThan(0)
