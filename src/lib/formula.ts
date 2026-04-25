@@ -1,8 +1,11 @@
+const culoriError = 'culori is not available, either install it or specify a formula in Tailwind Subshades config.'
+type CuloriRgb = { mode: 'rgb', r: number, g: number, b: number }
+
 let culoriParse: (color: any) => object|undefined;
-let culoriRgb: (color: any) => { r: number, g: number, b: number }|undefined;
-let culoriOklch: (color: any) => { l: number, c: number, h: number }|undefined;
+let culoriRgb: (color: any) => CuloriRgb|undefined;
+let culoriOklch: (color: any) => CuloriRgb|undefined;
 let culoriFormatCss: (color: any) => string|undefined;
-let culoriFormatHex: (color: any) => string|undefined;
+let culoriSerializeHex: (color: any) => string|undefined;
 
 try {
     const culori = await import('culori');
@@ -11,42 +14,40 @@ try {
     culoriRgb = culoriFn.useMode(culoriFn.modeRgb);
     culoriOklch = culoriFn.useMode(culoriFn.modeOklch);
     culoriFormatCss = culoriFn.formatCss;
-    culoriFormatHex = culoriFn.formatHex;
+    culoriSerializeHex = culoriFn.serializeHex;
 } catch (err) {
     //Ignore for now, throw an error in the functions that actually use it.
 }
 
-const culoriError = 'culori is not available, either install it or specify a formula in Tailwind Subshades config.'
-
-export function rgbLerp(color1: { r: number, g: number, b: number }, color2: { r: number, g: number, b: number }, weight: number): { r: number, g: number, b: number } {
+export function rgbLerp(color1: CuloriRgb, color2: CuloriRgb, weight: number): CuloriRgb {
     const r = color1.r + (color2.r - color1.r) * weight
     const g = color1.g + (color2.g - color1.g) * weight
     const b = color1.b + (color2.b - color1.b) * weight
-    return {r, g, b}
+    return { mode: 'rgb', r, g, b }
 }
 
-export function parseCuloriRgb(color: string): { r: number, g: number, b: number }|undefined {
+export function parseCuloriRgb(color: string): CuloriRgb|undefined {
     if (!culoriParse || !culoriRgb) {
         throw new Error(culoriError)
     }
     return culoriRgb(culoriParse(color))
 }
 
-export function outputCuloriHex(color: { r: number, g: number, b: number }): string {
-    if (!culoriFormatHex) {
+export function outputCuloriHex(color: CuloriRgb): string|undefined {
+    if (!culoriSerializeHex || !culoriRgb) {
         throw new Error(culoriError)
     }
-    return culoriFormatHex(culoriRgb(color))
+    return culoriSerializeHex(culoriRgb(color))
 }
 
-export function outputCuloriOklch(color: { r: number, g: number, b: number }): string {
-    if (!culoriFormatCss) {
+export function outputCuloriOklch(color: CuloriRgb): string|undefined {
+    if (!culoriFormatCss || !culoriOklch) {
         throw new Error(culoriError)
     }
     return culoriFormatCss(culoriOklch(color))
 }
 
-export function createFormula<O1 extends object, O2 extends object = O1>(parse: (color: string) => O1|undefined, interpolate: (color1: O1, color2: O1, weight: number) => O2, output: (color: O2) => string): (color1: string, color2: string, weight: number) => string|undefined {
+export function createFormula<O1 extends object, O2 extends object = O1>(parse: (color: string) => O1|undefined, interpolate: (color1: O1, color2: O1, weight: number) => O2, output: (color: O2) => string|undefined): (color1: string, color2: string, weight: number) => string|undefined {
     return (color1: string, color2: string, weight: number) => {
         const parsed1 = parse(color1)
         if (parsed1 === undefined) {
