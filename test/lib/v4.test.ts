@@ -1,13 +1,19 @@
 import {assert, describe, expect, test} from "vitest";
 import defaultColors from "tailwindcss/colors"
-import {defaultConfig} from "../../src/lib/v4";
 import {converter, parse} from "culori";
+import * as libv4 from "../../src/lib/v4";
+
+describe('module structure', () => {
+    test('exports named exports', () => {
+        assert.hasAllKeys(libv4, ['defaultConfig'])
+    })
+})
 
 describe('v4 defaultConfig', () => {
-    const config = defaultConfig(defaultColors)
+    const config = libv4.defaultConfig(defaultColors)
 
     test('returns a config object', () => {
-        assert.isFunction(defaultConfig)
+        assert.isFunction(libv4.defaultConfig)
         expect(config.default).toBe(defaultColors)
         expect(config.custom).toStrictEqual({})
         expect(config.ignore).toStrictEqual([])

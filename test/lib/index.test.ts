@@ -1,7 +1,6 @@
 import {assert, describe, expect, test, vi} from "vitest";
 import * as lib from "../../src/lib";
 import defaultColors from "tailwindcss/colors"
-import {createPlugin} from "../../src/lib";
 
 const steps50 = [...Array((1000/50)-1).keys()].map(n => (n+1) * 50)
 
@@ -19,6 +18,18 @@ const malachite = {
     '950': '#0b2c07',
 }
 const dark_blue = "#00c"
+
+describe('module structure', () => {
+    test('exports named exports', () => {
+        assert.hasAllKeys(lib, [
+            'determineSteps',
+            'generateConfig',
+            'generateShades',
+            'mergeColors',
+            'createPlugin',
+        ])
+    })
+})
 
 describe('determineSteps', () => {
     test.for([100, 50, 25, 10, 1])('expands divisble %i to an array of numbers', (value) => {
@@ -326,7 +337,7 @@ describe('mergeColors', () => {
 
 describe('createPlugin', () => {
     test('matches Tailwind plugin signature', () => {
-        const pluginFn = createPlugin(colors => ({
+        const pluginFn = lib.createPlugin(colors => ({
             default: {},
             custom: {},
             ignore: [],
@@ -347,7 +358,7 @@ describe('createPlugin', () => {
     })
 
     test('passes Tailwind default colors to default config', () => {
-        const plugin = createPlugin(colors => ({
+        const plugin = lib.createPlugin(colors => ({
             default: colors,
             custom: {},
             ignore: [],
@@ -361,7 +372,7 @@ describe('createPlugin', () => {
     })
 
     test('replaces default options with user options', () => {
-        const plugin = createPlugin(colors => ({
+        const plugin = lib.createPlugin(colors => ({
             default: colors,
             custom: {},
             ignore: [],
@@ -378,7 +389,7 @@ describe('createPlugin', () => {
     })
 
     test('drops default colors listed in ignore field', () => {
-        const plugin = createPlugin(colors => ({
+        const plugin = lib.createPlugin(colors => ({
             default: colors,
             custom: {},
             ignore: [],
@@ -395,7 +406,7 @@ describe('createPlugin', () => {
     })
 
     test('drops all default colors with ignore wildcard', () => {
-        const plugin = createPlugin(colors => ({
+        const plugin = lib.createPlugin(colors => ({
             default: colors,
             custom: {},
             ignore: [],
@@ -412,7 +423,7 @@ describe('createPlugin', () => {
     })
 
     test('drops deprecated colors from default config', () => {
-        const plugin = createPlugin(colors => ({
+        const plugin = lib.createPlugin(colors => ({
             default: colors,
             custom: {},
             ignore: [],
@@ -428,7 +439,7 @@ describe('createPlugin', () => {
     })
 
     test('does not drop deprecated colors from user specified default config', () => {
-        const plugin = createPlugin(colors => ({
+        const plugin = lib.createPlugin(colors => ({
             default: {},
             custom: {},
             ignore: [],
@@ -446,7 +457,7 @@ describe('createPlugin', () => {
     })
 
     test('allows passthrough of v4 color tokens', () => {
-        const plugin = createPlugin(colors => ({
+        const plugin = lib.createPlugin(colors => ({
             default: colors,
             custom: {},
             ignore: [],

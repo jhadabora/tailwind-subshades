@@ -1,8 +1,14 @@
-import {describe, expect, test} from "vitest";
+import {assert, describe, expect, test} from "vitest";
 import v3 from "../src/v3";
 import defaultColors from "tailwindcss/colors";
 import {createPlugin} from "../src/lib";
 import {defaultConfig} from "../src/lib/v3";
+
+describe('module structure', () => {
+    test('exports default export', () => {
+        assert.isFunction(v3)
+    })
+})
 
 describe('v3 plugin', () => {
     const config = { steps: 10 }
