@@ -6,7 +6,7 @@ This package provides a plugin for your Tailwind config that automatically gener
 
 ## Dependencies
 
-- [Node](https://nodejs.org) >=12.20.0
+- [Node](https://nodejs.org) >=20.19.0
 - [Tailwind](https://tailwindcss.com/) v3 or v4
 - [culori](https://culorijs.org/) ^4.0.1
 
