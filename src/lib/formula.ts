@@ -17,7 +17,7 @@ import('culori/fn').then(culoriFn => {
     culoriSerializeHex = culoriFn.serializeHex;
 }).catch(() => {})
 
-export function rgbLerp(color1: CuloriRgb, color2: CuloriRgb, weight: number): CuloriRgb {
+export function rgbLerp(color1: CuloriRgb, color2: CuloriRgb, weight: number): CuloriRgb|undefined {
     const r = color1.r + (color2.r - color1.r) * weight
     const g = color1.g + (color2.g - color1.g) * weight
     const b = color1.b + (color2.b - color1.b) * weight
@@ -45,7 +45,7 @@ export function outputCuloriOklch(color: CuloriRgb): string|undefined {
     return culoriFormatCss(culoriOklch(color))
 }
 
-export function createFormula<O1 extends object, O2 extends object = O1>(parse: (color: string) => O1|undefined, interpolate: (color1: O1, color2: O1, weight: number) => O2, output: (color: O2) => string|undefined): (color1: string, color2: string, weight: number) => string|undefined {
+export function createFormula<O1 extends object, O2 extends object = O1>(parse: (color: string) => O1|undefined, interpolate: (color1: O1, color2: O1, weight: number) => O2|undefined, output: (color: O2) => string|undefined): (color1: string, color2: string, weight: number) => string|undefined {
     return (color1: string, color2: string, weight: number) => {
         const parsed1 = parse(color1)
         if (parsed1 === undefined) {
@@ -57,6 +57,10 @@ export function createFormula<O1 extends object, O2 extends object = O1>(parse: 
         }
 
         const result = interpolate(parsed1, parsed2, weight)
+        if (result === undefined) {
+            return
+        }
+
         return output(result)
     }
 }
