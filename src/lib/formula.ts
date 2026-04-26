@@ -7,19 +7,15 @@ let culoriOklch: (color: any) => CuloriRgb|undefined;
 let culoriFormatCss: (color: any) => string|undefined;
 let culoriSerializeHex: (color: any) => string|undefined;
 
-try {
-    import('culori').then(culori => {
-        culoriParse = culori.parse;
-    })
-    import('culori/fn').then(culoriFn => {
-        culoriRgb = culoriFn.useMode(culoriFn.modeRgb);
-        culoriOklch = culoriFn.useMode(culoriFn.modeOklch);
-        culoriFormatCss = culoriFn.formatCss;
-        culoriSerializeHex = culoriFn.serializeHex;
-    })
-} catch (err) {
-    //Ignore for now, throw an error in the functions that actually use it.
-}
+import('culori').then(culori => {
+    culoriParse = culori.parse;
+}).catch(() => {})
+import('culori/fn').then(culoriFn => {
+    culoriRgb = culoriFn.useMode(culoriFn.modeRgb);
+    culoriOklch = culoriFn.useMode(culoriFn.modeOklch);
+    culoriFormatCss = culoriFn.formatCss;
+    culoriSerializeHex = culoriFn.serializeHex;
+}).catch(() => {})
 
 export function rgbLerp(color1: CuloriRgb, color2: CuloriRgb, weight: number): CuloriRgb {
     const r = color1.r + (color2.r - color1.r) * weight
