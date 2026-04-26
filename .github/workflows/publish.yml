@@ -48,6 +48,9 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@jhadabora'
 
+      - name: Set Scoped Package Name for GitHub Packages
+        run: npm pkg set name=@jhadabora/$(node -p "require('./package.json').name")
+
       - name: Install Dependencies
         run: npm ci
 
