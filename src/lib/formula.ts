@@ -1,21 +1,29 @@
+import { createRequire } from 'node:module'
+
 const culoriError = 'culori is not available, either install it or specify a formula in Tailwind Subshades config.'
 type CuloriRgb = { mode: 'rgb', r: number, g: number, b: number }
 
-let culoriParse: (color: any) => object|undefined;
+let culoriParse: (color: any) => { mode: string, [key: string]: any }|undefined;
 let culoriRgb: (color: any) => CuloriRgb|undefined;
+let culoriHsl2Rgb: (color: any) => CuloriRgb|undefined;
 let culoriOklch: (color: any) => CuloriRgb|undefined;
 let culoriFormatCss: (color: any) => string|undefined;
 let culoriSerializeHex: (color: any) => string|undefined;
 
-import('culori').then(culori => {
-    culoriParse = culori.parse;
-}).catch(() => {})
-import('culori/fn').then(culoriFn => {
-    culoriRgb = culoriFn.useMode(culoriFn.modeRgb);
-    culoriOklch = culoriFn.useMode(culoriFn.modeOklch);
-    culoriFormatCss = culoriFn.formatCss;
-    culoriSerializeHex = culoriFn.serializeHex;
-}).catch(() => {})
+const require = createRequire(import.meta.url)
+
+if (process.env.TAILWIND_SUBSHADES_TEST_DISABLE_CULORI !== 'true') {
+    try {
+        const culori = require('culori')
+        culoriParse = culori.parse;
+        const culoriFn = require('culori/fn')
+        culoriRgb = culoriFn.useMode(culoriFn.modeRgb);
+        culoriOklch = culoriFn.useMode(culoriFn.modeOklch);
+        culoriHsl2Rgb = culoriFn.convertHslToRgb;
+        culoriFormatCss = culoriFn.formatCss;
+        culoriSerializeHex = culoriFn.serializeHex;
+    } catch {}
+}
 
 export function rgbLerp(color1: CuloriRgb, color2: CuloriRgb, weight: number): CuloriRgb|undefined {
     const r = color1.r + (color2.r - color1.r) * weight
@@ -25,10 +33,17 @@ export function rgbLerp(color1: CuloriRgb, color2: CuloriRgb, weight: number): C
 }
 
 export function parseCuloriRgb(color: string): CuloriRgb|undefined {
-    if (!culoriParse || !culoriRgb) {
+    if (!culoriParse || !culoriRgb || !culoriHsl2Rgb) {
         throw new Error(culoriError)
     }
-    return culoriRgb(culoriParse(color))
+    let parsed = culoriParse(color)
+    if (parsed === undefined) {
+        return
+    }
+    if (parsed.mode === 'hsl') {
+        parsed = culoriHsl2Rgb(parsed)
+    }
+    return culoriRgb(parsed)
 }
 
 export function outputCuloriHex(color: CuloriRgb): string|undefined {

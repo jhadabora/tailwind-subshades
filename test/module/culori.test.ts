@@ -1,11 +1,15 @@
-import {describe, expect, test, vi} from "vitest";
-import {createPlugin} from "../../src/lib";
+import {beforeAll, describe, expect, test, vi} from "vitest";
 import defaultColors from "tailwindcss/colors";
+import {createPlugin} from "../../src/lib";
 
-vi.mock('culori', () => { throw new Error('Cannot find module') });
-vi.mock('culori/fn', () => { throw new Error('Cannot find module') });
+let formula: Awaited<typeof import('../../src/lib/formula')>
 
-const formula = await import('../../src/lib/formula');
+beforeAll(async () => {
+    vi.resetModules()
+    process.env.TAILWIND_SUBSHADES_TEST_DISABLE_CULORI = 'true'
+    formula = await import('../../src/lib/formula')
+    delete process.env.TAILWIND_SUBSHADES_TEST_DISABLE_CULORI
+})
 
 describe('throws with missing Culori', () => {
     test('parseCuloriRgb', async () => {
