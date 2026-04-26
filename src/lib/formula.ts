@@ -8,13 +8,15 @@ let culoriFormatCss: (color: any) => string|undefined;
 let culoriSerializeHex: (color: any) => string|undefined;
 
 try {
-    const culori = await import('culori');
-    culoriParse = culori.parse;
-    const culoriFn = await import('culori/fn');
-    culoriRgb = culoriFn.useMode(culoriFn.modeRgb);
-    culoriOklch = culoriFn.useMode(culoriFn.modeOklch);
-    culoriFormatCss = culoriFn.formatCss;
-    culoriSerializeHex = culoriFn.serializeHex;
+    import('culori').then(culori => {
+        culoriParse = culori.parse;
+    })
+    import('culori/fn').then(culoriFn => {
+        culoriRgb = culoriFn.useMode(culoriFn.modeRgb);
+        culoriOklch = culoriFn.useMode(culoriFn.modeOklch);
+        culoriFormatCss = culoriFn.formatCss;
+        culoriSerializeHex = culoriFn.serializeHex;
+    })
 } catch (err) {
     //Ignore for now, throw an error in the functions that actually use it.
 }

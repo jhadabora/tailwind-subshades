@@ -36,7 +36,7 @@ describe('rgbLerp', () => {
     })
 })
 
-describe('parseCuloriFgb', () => {
+describe('parseCuloriRgb', () => {
     test.for([
         ['#000000', 0.0, 0.0, 0.0],
         ['#ff0000', 1.0, 0.0, 0.0],
