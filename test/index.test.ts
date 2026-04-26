@@ -9,11 +9,15 @@ describe('module structure', () => {
             'lib',
             'libv3',
             'libv4',
+            'util',
+            'formula',
         ])
         assert.isFunction(index.v3)
         assert.isFunction(index.v4)
         expect(typeof index.lib).toBe('object')
         expect(typeof index.libv3).toBe('object')
         expect(typeof index.libv4).toBe('object')
+        expect(typeof index.util).toBe('object')
+        expect(typeof index.formula).toBe('object')
     })
 })
