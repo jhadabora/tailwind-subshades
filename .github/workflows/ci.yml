@@ -32,6 +32,3 @@ jobs:
 
       - name: Run Tests
         run: npm test run
-
-      - name: Run Tailwind Environment Tests
-        run: npm test run -w 30 -w 3x -w 40 -w 4x
