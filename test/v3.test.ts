@@ -1,8 +1,8 @@
-import defaultColors from 'tailwindcss/colors';
-import { assert, describe, expect, test } from 'vitest';
 import { createPlugin } from '../src/lib';
 import { defaultConfig } from '../src/lib/v3';
 import v3 from '../src/v3';
+import { assert, describe, expect, test } from 'vitest';
+import defaultColors from 'tailwindcss/colors';
 
 describe('module structure', () => {
     test('exports default export', () => {

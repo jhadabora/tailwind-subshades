@@ -1,7 +1,7 @@
-import defaultColors from 'tailwindcss/colors';
-import { assert, describe, expect, test } from 'vitest';
 import { v4rgbLerp } from '../../src/lib/formula';
 import * as libv4 from '../../src/lib/v4';
+import defaultColors from 'tailwindcss/colors';
+import { assert, describe, expect, test } from 'vitest';
 
 describe('module structure', () => {
     test('exports named exports', () => {
@@ -17,7 +17,10 @@ describe('v4 defaultConfig', () => {
         expect(config.default).toBe(defaultColors);
         expect(config.custom).toStrictEqual({});
         expect(config.ignore).toStrictEqual([]);
-        expect(config.extraShades).toStrictEqual({ 0: defaultColors.white, 1000: defaultColors.black });
+        expect(config.extraShades).toStrictEqual({
+            0: defaultColors.white,
+            1000: defaultColors.black,
+        });
         expect(config.steps).toStrictEqual(50);
         expect(config.formula).toBe(v4rgbLerp);
     });

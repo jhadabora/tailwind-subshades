@@ -1,8 +1,8 @@
-import defaultColors from 'tailwindcss/colors';
-import { assert, describe, expect, test } from 'vitest';
 import { createPlugin } from '../src/lib';
 import { defaultConfig } from '../src/lib/v4';
 import v4 from '../src/v4';
+import { assert, describe, expect, test } from 'vitest';
+import defaultColors from 'tailwindcss/colors';
 
 describe('module structure', () => {
     test('exports default export', () => {
@@ -21,7 +21,9 @@ describe('v4 plugin', () => {
     });
 
     test('generates oklch colors', () => {
-        const generated = plugin.config.theme.extend.colors({ colors: { blue: defaultColors.blue } });
+        const generated = plugin.config.theme.extend.colors({
+            colors: { blue: defaultColors.blue },
+        });
         for (const color of Object.values(generated.blue)) {
             expect(color).match(/^oklch\((\d+\.?\d*) (\d+\.?\d*) (\d+\.?\d*)\)$/i);
         }

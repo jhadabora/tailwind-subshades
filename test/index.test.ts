@@ -1,5 +1,5 @@
-import { assert, describe, expect, test } from 'vitest';
 import * as index from '../src/index';
+import { assert, describe, expect, test } from 'vitest';
 
 describe('module structure', () => {
     test('exports named exports', () => {

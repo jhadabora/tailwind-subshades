@@ -1,6 +1,6 @@
 {
   "name": "tailwind-subshades",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "A plugin for Tailwind v3 and v4 for generating intermediate color steps for vanilla and custom Tailwind color tokens.",
   "keywords": [
     "tailwind",
@@ -139,9 +139,7 @@
     "build": "tsdown",
     "test": "vitest",
     "prepublishOnly": "npm run build",
-    "lint": "eslint",
-    "format": "prettier --check",
-    "format:fix": "prettier --write",
+    "lint": "eslint --max-warnings=0",
     "lint:fix": "eslint --fix"
   },
   "devDependencies": {
@@ -150,7 +148,10 @@
     "@types/node": "^25.6.0",
     "@types/tailwindcss": "^3.0.11",
     "eslint": "^10.2.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import-x": "^4.16.2",
     "eslint-plugin-jsdoc": "^62.9.0",
+    "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-unused-imports": "^4.4.1",
     "prettier": "^3.8.3",
     "tailwindcss30": "npm:tailwindcss@^3.0.0",

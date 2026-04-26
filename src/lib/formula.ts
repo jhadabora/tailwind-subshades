@@ -1,14 +1,25 @@
 import { createRequire } from 'node:module';
 
-const culoriError = 'culori is not available, either install it or specify a formula in Tailwind Subshades config.';
+const culoriError =
+    'culori is not available, either install it or specify a formula in Tailwind Subshades config.';
 type CuloriRgb = { mode: 'rgb'; r: number; g: number; b: number };
 
 let culoriParse: (color: string) => { mode: string; [key: string]: string | number } | undefined;
-let culoriRgb: (color: { mode: string; [key: string]: string | number } | undefined) => CuloriRgb | undefined;
-let culoriHsl2Rgb: (color: { mode: string; [key: string]: string | number } | undefined) => CuloriRgb | undefined;
-let culoriOklch: (color: { mode: string; [key: string]: string | number } | undefined) => CuloriRgb | undefined;
-let culoriFormatCss: (color: { mode: string; [key: string]: string | number } | undefined) => string | undefined;
-let culoriSerializeHex: (color: { mode: string; [key: string]: string | number } | undefined) => string | undefined;
+let culoriRgb: (
+    color: { mode: string; [key: string]: string | number } | undefined,
+) => CuloriRgb | undefined;
+let culoriHsl2Rgb: (
+    color: { mode: string; [key: string]: string | number } | undefined,
+) => CuloriRgb | undefined;
+let culoriOklch: (
+    color: { mode: string; [key: string]: string | number } | undefined,
+) => CuloriRgb | undefined;
+let culoriFormatCss: (
+    color: { mode: string; [key: string]: string | number } | undefined,
+) => string | undefined;
+let culoriSerializeHex: (
+    color: { mode: string; [key: string]: string | number } | undefined,
+) => string | undefined;
 
 const require = createRequire(import.meta.url);
 
@@ -27,7 +38,11 @@ if (process.env.TAILWIND_SUBSHADES_TEST_DISABLE_CULORI !== 'true') {
     }
 }
 
-export function rgbLerp(color1: CuloriRgb, color2: CuloriRgb, weight: number): CuloriRgb | undefined {
+export function rgbLerp(
+    color1: CuloriRgb,
+    color2: CuloriRgb,
+    weight: number,
+): CuloriRgb | undefined {
     const r = color1.r + (color2.r - color1.r) * weight;
     const g = color1.g + (color2.g - color1.g) * weight;
     const b = color1.b + (color2.b - color1.b) * weight;

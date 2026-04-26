@@ -1,8 +1,8 @@
+import v3 from '../../src/v3';
+import { colorMalachite } from '../util';
 import postcss from 'postcss';
 import pkg from 'tailwindcss30/package.json';
 import { assert, describe, expect, test, vi } from 'vitest';
-import v3 from '../../src/v3';
-import { colorMalachite } from '../util';
 
 const tailwindcss = await import('tailwindcss30');
 vi.mock('tailwindcss', async () => tailwindcss);

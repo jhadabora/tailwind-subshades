@@ -1,7 +1,7 @@
-import defaultColors from 'tailwindcss/colors';
-import { assert, describe, expect, test } from 'vitest';
 import * as lib from '../../src/lib';
 import { colorDarkBlue, colorMalachite, steps50 } from '../util';
+import defaultColors from 'tailwindcss/colors';
+import { assert, describe, expect, test } from 'vitest';
 
 describe('module structure', () => {
     test('exports named exports', () => {
@@ -21,7 +21,9 @@ describe('generateShades', () => {
             [25, 35, 85],
             (color1, color2, weight) => `${color1};${color2};${weight}`,
         );
-        const components = Object.fromEntries(Object.entries(shades).map(([key, output]) => [key, output.split(';')]));
+        const components = Object.fromEntries(
+            Object.entries(shades).map(([key, output]) => [key, output.split(';')]),
+        );
         const keys = Object.keys(components);
         expect(keys).toStrictEqual(['25', '35', '85']);
         expect(components[25][0]).toBe('white');
@@ -35,8 +37,14 @@ describe('generateShades', () => {
             '500': '#0f0',
             1000: defaultColors.black,
         };
-        const shades = lib.generateShades(colors, steps50, (color1, color2, weight) => `${color1};${color2};${weight}`);
-        const components = Object.fromEntries(Object.entries(shades).map(([key, output]) => [key, output.split(';')]));
+        const shades = lib.generateShades(
+            colors,
+            steps50,
+            (color1, color2, weight) => `${color1};${color2};${weight}`,
+        );
+        const components = Object.fromEntries(
+            Object.entries(shades).map(([key, output]) => [key, output.split(';')]),
+        );
         expect(components[250][0]).toBe(defaultColors.white);
         expect(components[250][1]).toBe('#0f0');
         expect(Number(components[250][2])).toBe(0.5);
@@ -51,7 +59,11 @@ describe('generateShades', () => {
             100: 'red',
             200: 'black',
         };
-        const shades = lib.generateShades(colors, steps50, (color1, color2, weight) => `${color1};${color2};${weight}`);
+        const shades = lib.generateShades(
+            colors,
+            steps50,
+            (color1, color2, weight) => `${color1};${color2};${weight}`,
+        );
         expect(Object.keys(shades)).toStrictEqual(['50', '150']);
     });
 
@@ -66,7 +78,9 @@ describe('generateShades', () => {
             [-200, -50],
             (color1, color2, weight) => `${color1};${color2};${weight}`,
         );
-        const components = Object.fromEntries(Object.entries(shades).map(([key, output]) => [key, output.split(';')]));
+        const components = Object.fromEntries(
+            Object.entries(shades).map(([key, output]) => [key, output.split(';')]),
+        );
         const keys = Object.keys(components);
         expect(keys).toStrictEqual(['-200', '-50']);
         expect(components[-200][0]).toBe('white');
@@ -81,16 +95,19 @@ describe('generateShades', () => {
         ['#f00', 1],
         ['#ff0', 2],
         ['#ffff7f', 5],
-    ] as [string, number][])('returns shades from custom formula function - %s -> %f', ([color, expected]) => {
-        const colors: { [shade: number]: string } = {
-            500: color,
-            1000: defaultColors.black,
-        };
-        const shades = lib.generateShades(colors, steps50, (color1, _color2, _weight) =>
-            String(color1.split('f').length - 1),
-        );
-        expect(Number(shades[750])).toBe(expected);
-    });
+    ] as [string, number][])(
+        'returns shades from custom formula function - %s -> %f',
+        ([color, expected]) => {
+            const colors: { [shade: number]: string } = {
+                500: color,
+                1000: defaultColors.black,
+            };
+            const shades = lib.generateShades(colors, steps50, (color1, _color2, _weight) =>
+                String(color1.split('f').length - 1),
+            );
+            expect(Number(shades[750])).toBe(expected);
+        },
+    );
 
     test('returns empty object for one color', () => {
         const colors: { [shade: number]: string } = {
@@ -114,10 +131,19 @@ describe('generateConfig', () => {
             blue: { 400: defaultColors.blue[400], 600: defaultColors.blue[600] },
             malachite: colorMalachite,
         };
-        const generated = lib.generateConfig(colors, steps50, {}, (_color1, _color2, _weight) => 'noop');
+        const generated = lib.generateConfig(
+            colors,
+            steps50,
+            {},
+            (_color1, _color2, _weight) => 'noop',
+        );
 
         for (const [name, shades] of Object.entries(colors)) {
-            const actual = lib.generateShades(shades, steps50, (_color1, _color2, _weight) => 'noop');
+            const actual = lib.generateShades(
+                shades,
+                steps50,
+                (_color1, _color2, _weight) => 'noop',
+            );
             expect(Object.keys(generated[name]).length).toBeGreaterThan(0);
             expect(generated[name]).toStrictEqual(actual);
         }
@@ -129,7 +155,12 @@ describe('generateConfig', () => {
             white: defaultColors.white,
             fn: (_props: { opacityVariable: string; opacityValue: string }) => 'noop',
         };
-        const generated = lib.generateConfig(colors, steps50, {}, (_color1, _color2, _weight) => 'noop');
+        const generated = lib.generateConfig(
+            colors,
+            steps50,
+            {},
+            (_color1, _color2, _weight) => 'noop',
+        );
 
         expect(Object.keys(generated)).toStrictEqual(['malachite']);
         assert.isObject(generated.malachite);
@@ -157,7 +188,12 @@ describe('generateConfig', () => {
 
     test('returns empty object for no colors', () => {
         const colors = {};
-        const generated = lib.generateConfig(colors, steps50, {}, (_color1, _color2, _weight) => 'noop');
+        const generated = lib.generateConfig(
+            colors,
+            steps50,
+            {},
+            (_color1, _color2, _weight) => 'noop',
+        );
 
         expect(generated).toStrictEqual({});
     });
@@ -193,9 +229,16 @@ describe('createPlugin', () => {
             formula: (_color1, _color2, _weight) => 'noop',
         }))({});
 
-        const generated = plugin.config.theme.extend.colors({ colors: { malachite: colorMalachite } });
+        const generated = plugin.config.theme.extend.colors({
+            colors: { malachite: colorMalachite },
+        });
         expect(generated).toStrictEqual(
-            lib.generateConfig({ malachite: colorMalachite }, steps50, {}, (_color1, _color2, _weight) => 'noop'),
+            lib.generateConfig(
+                { malachite: colorMalachite },
+                steps50,
+                {},
+                (_color1, _color2, _weight) => 'noop',
+            ),
         );
     });
 
@@ -267,7 +310,13 @@ describe('createPlugin', () => {
         }))({});
 
         const generated = Object.keys(plugin.config.theme.extend.colors({ colors: defaultColors }));
-        for (const deprecatedColor of ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray']) {
+        for (const deprecatedColor of [
+            'lightBlue',
+            'warmGray',
+            'trueGray',
+            'coolGray',
+            'blueGray',
+        ]) {
             expect(generated).not.toContain(deprecatedColor);
         }
     });

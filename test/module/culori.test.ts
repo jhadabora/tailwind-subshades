@@ -1,6 +1,6 @@
+import { createPlugin } from '../../src/lib';
 import defaultColors from 'tailwindcss/colors';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
-import { createPlugin } from '../../src/lib';
 
 let formula: Awaited<typeof import('../../src/lib/formula')>;
 
@@ -29,11 +29,15 @@ describe('throws with missing Culori', () => {
     });
 
     test('v3rgbLerp', async () => {
-        expect(() => formula.v3rgbLerp('#ff0000', '#00ff00', 0.5)).toThrow('culori is not available');
+        expect(() => formula.v3rgbLerp('#ff0000', '#00ff00', 0.5)).toThrow(
+            'culori is not available',
+        );
     });
 
     test('v4rgbLerp', async () => {
-        expect(() => formula.v4rgbLerp('#ff0000', '#00ff00', 0.5)).toThrow('culori is not available');
+        expect(() => formula.v4rgbLerp('#ff0000', '#00ff00', 0.5)).toThrow(
+            'culori is not available',
+        );
     });
 });
 
@@ -47,7 +51,9 @@ describe('works with missing Culori', () => {
             extraShades: {},
             formula: (_color1, _color2, _weight) => 'noop',
         }));
-        const shades = plugin({}).config.theme.extend.colors({ colors: { red: defaultColors.red } });
+        const shades = plugin({}).config.theme.extend.colors({
+            colors: { red: defaultColors.red },
+        });
         expect(Object.values(shades.red)).toContain('noop');
     });
 });

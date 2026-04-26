@@ -1,6 +1,6 @@
-import { assert, describe, expect, test } from 'vitest';
 import * as lib from '../src/lib';
 import nested from '../src/nested';
+import { assert, describe, expect, test } from 'vitest';
 
 describe('module structure', () => {
     test('exports nested objects', () => {

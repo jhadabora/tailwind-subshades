@@ -1,8 +1,8 @@
+import { determineSteps, mergeColors } from './util';
 import type defaultColors from 'tailwindcss/colors';
 import type { TailwindPluginWithOptionsFn } from 'tailwindcss/plugin';
 import tailwindPlugin from 'tailwindcss/plugin';
 import type { TailwindColorValue } from 'tailwindcss/tailwind-config';
-import { determineSteps, mergeColors } from './util';
 
 const deprecatedColors = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray'];
 const colorToken = /^--color-([\w-]+)-(\d+)$/;
@@ -99,7 +99,10 @@ export function createPlugin(
                                 config.default = Object.fromEntries(
                                     Object.keys(config.default)
                                         .filter((key) => !config.ignore.includes(key))
-                                        .map((key) => [key, config.default[key as keyof typeof config.default]]),
+                                        .map((key) => [
+                                            key,
+                                            config.default[key as keyof typeof config.default],
+                                        ]),
                                 );
                             }
 
@@ -109,7 +112,9 @@ export function createPlugin(
                                 .filter(Boolean) as RegExpMatchArray[];
                             for (const [token, name, shade] of tokens) {
                                 passthrough[name] ??= {};
-                                passthrough[name][Number(shade)] = config[token as keyof typeof config] as string;
+                                passthrough[name][Number(shade)] = config[
+                                    token as keyof typeof config
+                                ] as string;
                             }
 
                             const all = mergeColors(config.default, passthrough, config.custom);
