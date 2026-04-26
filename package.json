@@ -94,6 +94,26 @@
         "default": "./dist/lib/index.cjs"
       }
     },
+    "./lib/util": {
+      "import": {
+        "types": "./dist/lib/util.d.mts",
+        "default": "./dist/lib/util.mjs"
+      },
+      "require": {
+        "types": "./dist/lib/util.d.cts",
+        "default": "./dist/lib/util.cjs"
+      }
+    },
+    "./lib/formula": {
+      "import": {
+        "types": "./dist/lib/formula.d.mts",
+        "default": "./dist/lib/formula.mjs"
+      },
+      "require": {
+        "types": "./dist/lib/formula.d.cts",
+        "default": "./dist/lib/formula.cjs"
+      }
+    },
     "./lib/v4": {
       "import": {
         "types": "./dist/lib/v4.d.mts",
