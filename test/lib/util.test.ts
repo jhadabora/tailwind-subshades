@@ -1,5 +1,5 @@
 import * as util from '../../src/lib/util';
-import {colorDarkBlue, colorMalachite, steps50} from '../util';
+import { colorDarkBlue, colorMalachite, steps50 } from '../util';
 import defaultColors from 'tailwindcss/colors';
 import { assert, describe, expect, test } from 'vitest';
 
