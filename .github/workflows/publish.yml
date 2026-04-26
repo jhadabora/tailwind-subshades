@@ -2,8 +2,6 @@ name: Publish Package
 on:
   release:
     types: [published]
-  pull_request:
-    branches: [main]
 jobs:
   npm:
     name: Publish to NPM Registry
@@ -27,7 +25,7 @@ jobs:
         run: npm ci
 
       - name: Publish to NPM Registry
-        run: npm publish --access public --dry-run
+        run: npm publish --access public
 
   github:
     name: Publish to GitHub Registry
