@@ -1,7 +1,5 @@
 import {DefaultColors, SubshadesConfig} from "./index";
-import {useMode, modeRgb, formatHex} from "culori/fn";
-
-const rgb = useMode(modeRgb)
+import {v3rgbLerp} from "./formula";
 
 export const defaultConfig = (colors: Partial<DefaultColors>): SubshadesConfig => ({
     default: colors,
@@ -12,5 +10,5 @@ export const defaultConfig = (colors: Partial<DefaultColors>): SubshadesConfig =
         0: colors['white'] ?? '#fff',
         1000: colors['black'] ?? '#000',
     },
-    output: (color) => formatHex(rgb(color)),
+    formula: v3rgbLerp,
 })

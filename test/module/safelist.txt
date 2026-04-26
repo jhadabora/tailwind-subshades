@@ -1,3 +1,8 @@
+bg-red-500
+bg-red-550
+bg-malachite-400
+bg-malachite-500
+bg-malachite-550
 bg-red-500/50
 bg-red-550/50
 bg-malachite-400/50

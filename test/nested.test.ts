@@ -16,8 +16,12 @@ describe('module structure', () => {
         assert.containsAllKeys(nested.lib, [
             'v3',
             'v4',
+            'util',
+            'formula',
         ])
         expect(typeof nested.lib.v3).toBe('object')
         expect(typeof nested.lib.v4).toBe('object')
+        expect(typeof nested.lib.util).toBe('object')
+        expect(typeof nested.lib.formula).toBe('object')
     })
 })

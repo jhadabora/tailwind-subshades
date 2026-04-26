@@ -1,9 +1,11 @@
 import defaultColors from "tailwindcss/colors"
-import tailwindPlugin, {TailwindPluginWithOptionsFn} from "tailwindcss/plugin";
-import type {TailwindPluginWithOptions} from "tailwindcss/plugin";
+import tailwindPlugin from "tailwindcss/plugin";
+import type {TailwindPluginWithOptionsFn} from "tailwindcss/plugin";
 import {TailwindColorValue} from "tailwindcss/tailwind-config";
-import {modeRgb, useMode} from "culori/fn";
-import {parse} from "culori";
+import {determineSteps, mergeColors} from "./util";
+
+const deprecatedColors = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray']
+const colorToken = /^--color-([\w-]+)-(\d+)$/
 
 export type DefaultColors = typeof defaultColors
 
@@ -13,41 +15,22 @@ export interface SubshadesConfig extends Partial<Record<`--color-${string}-${num
     ignore: string[] | string,
     steps: number|number[],
     extraShades: { [shade: string|number]: string },
-    output: (color: { mode: 'rgb', r: number, g: number, b: number }) => string,
+    formula: (color1: string, color2: string, weight: number) => string|undefined,
 }
 
-const deprecatedColors = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray']
-const colorToken = /^--color-([\w-]+)-(\d+)$/
-
-export function determineSteps(steps: number|number[]): number[] {
-    if (Array.isArray(steps)) {
-        return steps
-    }
-    if (steps <= 0 || steps > 1000) {
-        return []
-    }
-    const output = []
-    for (let i = steps; i < 1000; i += steps) {
-        output.push(i)
-    }
-    return output
-}
-
-export function generateConfig(colors: { [p: string]: TailwindColorValue }, steps: number[], extra: { [p: number]: string }, output: (rgb: { mode: 'rgb', r: number, g: number, b: number }) => string): { [p: string]: { [p: number]: string } } {
+export function generateConfig(colors: { [p: string]: TailwindColorValue }, steps: number[], extra: { [p: number]: string }, formula: (color1: string, color2: string, weight: number) => string|undefined): { [p: string]: { [p: number]: string } } {
     const ret: { [name: string]: { [shade: number]: string } } = {}
     for (const [name, color] of Object.entries(colors)) {
         if (typeof color !== 'object') {
             continue
         }
         const shades = {...extra, ...color}
-        ret[name] = generateShades(shades, steps, output)
+        ret[name] = generateShades(shades, steps, formula)
     }
     return ret
 }
 
-const rgb = useMode(modeRgb)
-
-export function generateShades(original: { [shade: string|number]: string }, steps: number[], output: (rgb: { mode: 'rgb', r: number, g: number, b: number }) => string): { [shade: number]: string } {
+export function generateShades(original: { [shade: string|number]: string }, steps: number[], formula: (color1: string, color2: string, weight: number) => string|undefined): { [shade: number]: string } {
     const additions: { [shade: number]: string } = {}
     const shades = Object.keys(original).map(Number).filter(n => !isNaN(n))
     if (shades.length <= 0) {
@@ -61,47 +44,20 @@ export function generateShades(original: { [shade: string|number]: string }, ste
 
         const prevShade = Math.max(...shades.filter(n => n < step))
         const nextShade = Math.min(...shades.filter(n => n > step))
-
-        const prevParse = rgb(parse(original[prevShade]))
-        const nextParse = rgb(parse(original[nextShade]))
-        if (!prevParse || !nextParse) {
+        const prevColor = original[prevShade]
+        const nextColor = original[nextShade]
+        if (!prevColor || !nextColor) {
             continue
         }
 
-        const factor = (step - prevShade) / (nextShade - prevShade)
-        const result = output({
-            mode: 'rgb',
-            r: prevParse.r + ((nextParse.r - prevParse.r) * factor),
-            g: prevParse.g + ((nextParse.g - prevParse.g) * factor),
-            b: prevParse.b + ((nextParse.b - prevParse.b) * factor),
-        })
-        if (result) {
-            additions[step] = result
+        const weight = (step - prevShade) / (nextShade - prevShade)
+        const result = formula(prevColor, nextColor, weight)
+        if (!result) {
+            continue
         }
+        additions[step] = result
     }
     return additions
-}
-
-export function mergeColors(...sources: { [name: string]: TailwindColorValue }[]): { [name: string]: TailwindColorValue } {
-    const result: { [name: string]: TailwindColorValue } = {}
-
-    for (const source of sources) {
-        for (const key in source) {
-            const resultValue = result[key]
-            const sourceValue = source[key]
-
-            if (
-                typeof resultValue === 'object' && resultValue !== null && !Array.isArray(resultValue) && typeof resultValue !== 'function' &&
-                typeof sourceValue === 'object' && sourceValue !== null && !Array.isArray(sourceValue) && typeof sourceValue !== 'function'
-            ) {
-                result[key] = {...resultValue, ...sourceValue}
-            } else {
-                result[key] = sourceValue
-            }
-        }
-    }
-
-    return result
 }
 
 export function createPlugin(defaultConfig: (colors: Partial<DefaultColors>) => SubshadesConfig): TailwindPluginWithOptionsFn<Partial<SubshadesConfig>> {
@@ -144,7 +100,7 @@ export function createPlugin(defaultConfig: (colors: Partial<DefaultColors>) => 
 
                             const all = mergeColors(config.default, passthrough, config.custom)
                             const steps = determineSteps(config.steps)
-                            return mergeColors(generateConfig(all, steps, config.extraShades, config.output), passthrough)
+                            return mergeColors(generateConfig(all, steps, config.extraShades, config.formula), passthrough)
                         }
                     }
                 }
