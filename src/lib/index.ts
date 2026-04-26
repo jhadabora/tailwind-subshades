@@ -1,5 +1,6 @@
 import { determineSteps, mergeColors } from './util';
 import type defaultColors from 'tailwindcss/colors';
+// @ts-expect-error This type isn't exposed by tailwindcss, but we can still use it from @types.
 import type { TailwindPluginWithOptionsFn } from 'tailwindcss/plugin';
 import tailwindPlugin from 'tailwindcss/plugin';
 import type { TailwindColorValue } from 'tailwindcss/tailwind-config';

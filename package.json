@@ -139,6 +139,7 @@
     "build": "tsdown",
     "test": "vitest",
     "prepublishOnly": "npm run build",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint --max-warnings=0",
     "lint:fix": "eslint --fix"
   },
