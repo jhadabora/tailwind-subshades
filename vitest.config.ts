@@ -1,11 +1,8 @@
-import { configDefaults } from 'vitest/config'
-import {defineConfig} from "tsdown";
+import { defineConfig } from 'tsdown';
+import { configDefaults } from 'vitest/config';
 
 export default defineConfig({
     test: {
-        exclude: [
-            ...configDefaults.exclude,
-            'workspace/**'
-        ],
+        exclude: [...configDefaults.exclude, 'workspace/**'],
     },
 });

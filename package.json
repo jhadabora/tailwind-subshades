@@ -138,9 +138,13 @@
   "scripts": {
     "build": "tsdown",
     "test": "vitest",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "lint": "biome check . --error-on-warnings",
+    "lint:fix": "biome check . --write --error-on-warnings",
+    "format": "biome format . --write --error-on-warnings"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.13",
     "@types/culori": "^4.0.1",
     "@types/node": "^25.6.0",
     "@types/tailwindcss": "^3.0.11",
