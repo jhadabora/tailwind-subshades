@@ -1,4 +1,4 @@
-import {defaultConfig} from "./lib/v4";
-import {createPlugin} from "./lib";
+import { createPlugin } from './lib';
+import { defaultConfig } from './lib/v4';
 
-export default createPlugin(defaultConfig)
+export default createPlugin(defaultConfig);

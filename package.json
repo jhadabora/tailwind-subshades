@@ -1,6 +1,6 @@
 {
   "name": "tailwind-subshades",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "A plugin for Tailwind v3 and v4 for generating intermediate color steps for vanilla and custom Tailwind color tokens.",
   "keywords": [
     "tailwind",
@@ -138,12 +138,23 @@
   "scripts": {
     "build": "tsdown",
     "test": "vitest",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint --max-warnings=0",
+    "lint:fix": "eslint --fix"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/culori": "^4.0.1",
     "@types/node": "^25.6.0",
     "@types/tailwindcss": "^3.0.11",
+    "eslint": "^10.2.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import-x": "^4.16.2",
+    "eslint-plugin-jsdoc": "^62.9.0",
+    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "prettier": "^3.8.3",
     "tailwindcss30": "npm:tailwindcss@^3.0.0",
     "tailwindcss3x": "npm:tailwindcss@^3.4.19",
     "tailwindcss40": "npm:tailwindcss@^4.0.0",
@@ -152,6 +163,7 @@
     "tailwindpostcss4x": "npm:@tailwindcss/postcss@^4.2.4",
     "tsdown": "^0.21.9",
     "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.0",
     "vitest": "^4.1.5"
   },
   "dependencies": {
