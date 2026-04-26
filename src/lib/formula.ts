@@ -22,7 +22,9 @@ if (process.env.TAILWIND_SUBSHADES_TEST_DISABLE_CULORI !== 'true') {
         culoriHsl2Rgb = culoriFn.convertHslToRgb;
         culoriFormatCss = culoriFn.formatCss;
         culoriSerializeHex = culoriFn.serializeHex;
-    } catch {}
+    } catch {
+        // Ignore any errors, these are given later when actually using a below Culori function.
+    }
 }
 
 export function rgbLerp(color1: CuloriRgb, color2: CuloriRgb, weight: number): CuloriRgb | undefined {

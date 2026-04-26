@@ -139,15 +139,20 @@
     "build": "tsdown",
     "test": "vitest",
     "prepublishOnly": "npm run build",
-    "lint": "biome check . --error-on-warnings",
-    "lint:fix": "biome check . --write --error-on-warnings",
-    "format": "biome format . --write --error-on-warnings"
+    "lint": "eslint",
+    "format": "prettier --check",
+    "format:fix": "prettier --write",
+    "lint:fix": "eslint --fix"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.13",
+    "@eslint/js": "^10.0.1",
     "@types/culori": "^4.0.1",
     "@types/node": "^25.6.0",
     "@types/tailwindcss": "^3.0.11",
+    "eslint": "^10.2.1",
+    "eslint-plugin-jsdoc": "^62.9.0",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "prettier": "^3.8.3",
     "tailwindcss30": "npm:tailwindcss@^3.0.0",
     "tailwindcss3x": "npm:tailwindcss@^3.4.19",
     "tailwindcss40": "npm:tailwindcss@^4.0.0",
@@ -156,6 +161,7 @@
     "tailwindpostcss4x": "npm:@tailwindcss/postcss@^4.2.4",
     "tsdown": "^0.21.9",
     "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.0",
     "vitest": "^4.1.5"
   },
   "dependencies": {
