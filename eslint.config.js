@@ -3,6 +3,7 @@ import tseslint from "typescript-eslint";
 import importPlugin from 'eslint-plugin-import-x';
 import unusedImports from "eslint-plugin-unused-imports";
 import prettier from 'eslint-plugin-prettier/recommended';
+import {jsdoc} from 'eslint-plugin-jsdoc';
 
 export default [
   {
@@ -43,6 +44,32 @@ export default [
         },
       ],
     }
+  },
+  {
+    ...jsdoc({
+      config: 'flat/recommended-typescript',
+      rules: {
+        'jsdoc/check-values': [
+          'error',
+          {allowedLicenses: ['MIT']},
+        ],
+        'jsdoc/require-throws': 'error',
+        'jsdoc/require-returns': [
+          'error',
+          {forceRequireReturn: true},
+        ],
+      },
+      settings: {
+        contexts: [
+          'ExportNamedDeclaration:has(> VariableDeclaration)',
+          'ExportDefaultDeclaration:has(> FunctionDeclaration)',
+          'ExportNamedDeclaration:has(> FunctionDeclaration)',
+          "MethodDefinition",
+          "ClassDeclaration",
+        ]
+      }
+    }),
+    files: ["src/**/*.ts"],
   },
   {
     files: ["src/**/*.ts", "test/**/*", "test/**/*.ts"],

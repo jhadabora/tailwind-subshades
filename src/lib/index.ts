@@ -19,6 +19,14 @@ export interface SubshadesConfig extends Partial<Record<`--color-${string}-${num
     formula: (color1: string, color2: string, weight: number) => string | undefined;
 }
 
+/**
+ * [Generate shades]{@link generateShades} for multiple Tailwind theme config colors.
+ * @param colors Tailwind theme config colors. Colors that aren't given in object format with numeric shades will be ignored.
+ * @param steps An array of shade steps to generate for each color. Shades that already exist in a color will be skipped.
+ * @param extra Any extra shades to add to each color before generating shades. Usually used to add white as shade 0 and black as shade 1000.
+ * @param formula A [color mixing formula]{@link createFormula} function that takes three colors and a weight between 0 and 1 and returns a new color.
+ * @returns An object of Tailwind theme config colors with only generated shades for each color, keyed by color name.
+ */
 export function generateConfig(
     colors: { [p: string]: TailwindColorValue },
     steps: number[],
@@ -36,6 +44,13 @@ export function generateConfig(
     return ret;
 }
 
+/**
+ * Generate intermediate shades for a color object with numeric shades.
+ * @param original A color object in Tailwind theme config color object format with numeric shades.
+ * @param steps An array of shade steps to generate for each color. Shades that already exist in a color will be skipped.
+ * @param formula A [color mixing formula]{@link createFormula} function that takes three colors and a weight between 0 and 1 and returns a new color.
+ * @returns A Tailwind theme config color object with only generated shades for the given original color.
+ */
 export function generateShades(
     original: { [shade: string | number]: string },
     steps: number[],
@@ -72,6 +87,12 @@ export function generateShades(
     return additions;
 }
 
+/**
+ * Create a Tailwind plugin that generates shades for each color in the provided config.
+ * Takes a default config function that is passed the default Tailwind colors at runtime to provide a default config, that is then replaced by options the user specifies in their Tailwind config when installing the plugin.
+ * @param defaultConfig A function that takes default Tailwind theme config colors, and returns a Tailwind Subshades default config.
+ * @returns A Tailwind plugin creator that supports Tailwind Subshades config options.
+ */
 export function createPlugin(
     defaultConfig: (colors: Partial<DefaultColors>) => SubshadesConfig,
 ): TailwindPluginWithOptionsFn<Partial<SubshadesConfig>> {
