@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node.js to Publish
         uses: actions/setup-node@v6
         with:
-          node-version: '20.19.0'
+          node-version: '24.15.0'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install Dependencies
@@ -44,7 +44,7 @@ jobs:
       - name: Setup Node.js to Publish
         uses: actions/setup-node@v6
         with:
-          node-version: '20.19.0'
+          node-version: '24.15.0'
           registry-url: 'https://npm.pkg.github.com'
 
       - name: Install Dependencies
