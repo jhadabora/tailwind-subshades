@@ -53,6 +53,44 @@ describe('generateShades', () => {
         expect(Number(components[900][2])).toBe(0.8);
     });
 
+    test('ignores shades with string names', () => {
+        const colors: { [shade: string | number]: string } = {
+            '0': defaultColors.white,
+            '500': '#00f',
+            purple: 'white',
+            1000: defaultColors.black,
+        };
+        const shades = lib.generateShades(
+            colors,
+            [250, 750],
+            (color1, color2, weight) => `${color1};${color2};${weight}`,
+        );
+        const components = Object.fromEntries(
+            Object.entries(shades).map(([key, output]) => [key, output.split(';')]),
+        );
+        expect(Object.keys(components)).toStrictEqual(['250', '750']);
+        expect(components[250][0]).toBe(defaultColors.white);
+        expect(components[250][1]).toBe('#00f');
+        expect(Number(components[250][2])).toBe(0.5);
+        expect(components[750][0]).toBe('#00f');
+        expect(components[750][1]).toBe(defaultColors.black);
+        expect(Number(components[750][2])).toBe(0.5);
+    });
+
+    test('returns empty object with only string names', () => {
+        const colors: { [shade: string]: string } = {
+            white: defaultColors.white,
+            purple: 'white',
+            black: defaultColors.black,
+        };
+        const shades = lib.generateShades(
+            colors,
+            [250, 750],
+            (color1, color2, weight) => `${color1};${color2};${weight}`,
+        );
+        expect(shades).toStrictEqual({});
+    });
+
     test('does not return shades out of color bounds', () => {
         const colors: { [shade: number]: string } = {
             0: 'white',

@@ -1,5 +1,5 @@
 import * as util from '../../src/lib/util';
-import { colorMalachite, steps50 } from '../util';
+import {colorDarkBlue, colorMalachite, steps50} from '../util';
 import defaultColors from 'tailwindcss/colors';
 import { assert, describe, expect, test } from 'vitest';
 
@@ -74,7 +74,7 @@ describe('mergeColors', () => {
             },
             {
                 red: {
-                    400: defaultColors.red[400],
+                    fourhundred: defaultColors.red[400],
                 },
             },
         );
@@ -83,7 +83,7 @@ describe('mergeColors', () => {
                 100: defaultColors.red[100],
                 200: defaultColors.red[200],
                 300: defaultColors.red[300],
-                400: defaultColors.red[400],
+                fourhundred: defaultColors.red[400],
             },
         });
     });
@@ -93,15 +93,18 @@ describe('mergeColors', () => {
             {
                 red: defaultColors.orange,
                 malachite: { 400: colorMalachite[400], 500: colorMalachite[600] },
+                named: { DEFAULT: 'black' },
             },
             {
                 red: defaultColors.red,
                 malachite: { 500: colorMalachite[500] },
+                named: { DEFAULT: colorDarkBlue },
             },
         );
         expect(merged).toStrictEqual({
             red: defaultColors.red,
             malachite: { 400: colorMalachite[400], 500: colorMalachite[500] },
+            named: { DEFAULT: colorDarkBlue },
         });
     });
 
@@ -111,15 +114,18 @@ describe('mergeColors', () => {
             {
                 black: defaultColors.red,
                 malachite: { 400: colorMalachite[400], 500: colorMalachite[500] },
+                named: { DEFAULT: colorDarkBlue },
             },
             {
                 black: defaultColors.black,
                 malachite: malachiteFn,
+                named: colorDarkBlue,
             },
         );
         expect(merged).toStrictEqual({
             black: defaultColors.black,
             malachite: malachiteFn,
+            named: colorDarkBlue,
         });
     });
 
@@ -129,15 +135,18 @@ describe('mergeColors', () => {
             {
                 black: defaultColors.black,
                 malachite: malachiteFn,
+                named: colorDarkBlue,
             },
             {
                 black: defaultColors.red,
                 malachite: { 400: colorMalachite[400], 500: colorMalachite[500] },
+                named: { DEFAULT: colorDarkBlue },
             },
         );
         expect(merged).toStrictEqual({
             black: defaultColors.red,
             malachite: { 400: colorMalachite[400], 500: colorMalachite[500] },
+            named: { DEFAULT: colorDarkBlue },
         });
     });
 });
