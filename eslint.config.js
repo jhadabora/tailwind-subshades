@@ -59,7 +59,7 @@ export default [
     },
 
     rules: {
-      "max-len": ["error", { code: 120 }],
+      "max-len": ["error", { code: 160 }],
 
       'no-var': 'error',
       "prefer-const": "error",
